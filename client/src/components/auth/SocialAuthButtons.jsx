@@ -84,9 +84,9 @@ export default function SocialAuthButtons({
           <p style={{ margin: '0 0 8px' }}>{configHint}</p>
           <p style={{ margin: 0, fontSize: 12 }}>
             In Google Cloud Console, create an <strong>OAuth 2.0 Client ID</strong> (Web application),
-            add your app origins (e.g. <code>http://localhost:5173</code> and your Heroku HTTPS URL)
-            under Authorized JavaScript origins, set <code>GOOGLE_CLIENT_ID</code> on the server, and
-            restart.
+            add your app origins (e.g. <code>http://localhost:5173</code> and your Vercel HTTPS URL)
+            under Authorized JavaScript origins, set <code>GOOGLE_CLIENT_ID</code> on the Railway API
+            service Variables, and redeploy.
           </p>
         </div>
       )}

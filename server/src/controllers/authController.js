@@ -243,7 +243,7 @@ export const googleConfig = asyncHandler(async (req, res) => {
   let hint = null;
 
   if (!clientId) {
-    hint = 'Add GOOGLE_CLIENT_ID to server/.env';
+    hint = 'Add GOOGLE_CLIENT_ID to Railway Variables (web service), then redeploy';
   } else if (isGoogleClientSecret(clientId)) {
     hint = 'GOOGLE_CLIENT_ID is a client secret (GOCSPX-…). Use the OAuth Client ID ending in .apps.googleusercontent.com';
   } else if (!isValidGoogleClientId(clientId)) {

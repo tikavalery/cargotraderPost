@@ -182,8 +182,10 @@ function startHttpServer() {
 // Listen first so Railway healthchecks pass while DB connects / warms up.
 startHttpServer();
 
-connectDB()
-  .then(async () => {
+async function connectWithRetry(attempt = 1) {
+  const maxAttempts = 12;
+  try {
+    await connectDB();
     await Shipment.reconcileIndexes().catch((err) => {
       console.warn('[shipments] index reconcile failed:', err.message);
     });
@@ -228,10 +230,18 @@ connectDB()
     }, GRACE_SWEEP_MS);
 
     startTrackingPoller();
-  })
-  .catch((err) => {
-    console.error('DB connection failed:', err.message);
+  } catch (err) {
+    console.error(`[boot] DB connection failed (attempt ${attempt}/${maxAttempts}):`, err.message);
+    if (attempt < maxAttempts) {
+      const waitMs = Math.min(30000, 2000 * attempt);
+      console.error(`[boot] Retrying database connection in ${waitMs}ms…`);
+      setTimeout(() => connectWithRetry(attempt + 1), waitMs);
+      return;
+    }
     console.error(
-      '[boot] HTTP is up for healthchecks, but API data routes will fail until DATABASE_URL is fixed.'
+      '[boot] HTTP is up for healthchecks, but API data routes will fail until DATABASE_URL / Postgres is fixed.'
     );
-  });
+  }
+}
+
+connectWithRetry();
