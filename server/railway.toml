@@ -1,6 +1,4 @@
-# Railway — deploy from the `server` root directory
-# Dashboard: New Project → Deploy from GitHub → Root Directory = server
-# Add a PostgreSQL plugin and link it so DATABASE_URL is injected.
+# Optional: if you set Railway Root Directory = server, this file is used instead of ../railway.toml
 
 [build]
 builder = "NIXPACKS"
