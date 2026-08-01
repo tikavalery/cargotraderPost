@@ -1,12 +1,12 @@
-# Optional: if you set Railway Root Directory = server, this file is used instead of ../railway.toml
+# Used when Railway Root Directory = server
 
 [build]
 builder = "NIXPACKS"
 buildCommand = "npm install && npx prisma generate"
 
 [deploy]
-startCommand = "npx prisma migrate deploy && node src/index.js"
+startCommand = "npm run start:railway"
 healthcheckPath = "/api/health"
-healthcheckTimeout = 100
+healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5

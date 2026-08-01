@@ -22,14 +22,17 @@ function isWeakSecret(value) {
 
 /**
  * Fail fast in production when critical secrets / services are missing.
+ * Non-blocking ops (email, Cloudinary, CLIENT_URL) are warnings so Railway
+ * can still boot while you finish configuring integrations.
  */
 export function assertProductionSafety() {
   if (process.env.NODE_ENV !== 'production') return;
 
   const errors = [];
+  const warnings = [];
 
   if (!process.env.DATABASE_URL?.trim()) {
-    errors.push('DATABASE_URL is required in production (Railway PostgreSQL connection string)');
+    errors.push('DATABASE_URL is required in production (link Railway PostgreSQL to this service)');
   }
   if (isWeakSecret(process.env.JWT_SECRET)) {
     errors.push('JWT_SECRET must be a strong random value (32+ chars; not a placeholder)');
@@ -38,13 +41,13 @@ export function assertProductionSafety() {
     errors.push('JWT_REFRESH_SECRET must be a strong random value (32+ chars; not a placeholder)');
   }
   if (!process.env.CLIENT_URL?.trim() || /localhost|127\.0\.0\.1/i.test(process.env.CLIENT_URL)) {
-    errors.push('CLIENT_URL must be your public HTTPS app URL in production');
+    warnings.push('CLIENT_URL should be your Vercel HTTPS URL (CORS / Stripe return links)');
   }
   if (!isCloudinaryConfigured()) {
-    errors.push('CLOUDINARY_* credentials are required in production (no data-URL uploads)');
+    warnings.push('CLOUDINARY_* not set — image uploads will be limited until configured');
   }
   if (!isSmtpConfigured()) {
-    errors.push('SMTP_* is required in production for invites, password reset, and billing email');
+    warnings.push('SMTP_* not set — invites / password reset email will not send until configured');
   }
   if (isStripeConfigured()) {
     if (!process.env.STRIPE_WEBHOOK_SECRET?.trim()) {
@@ -62,6 +65,10 @@ export function assertProductionSafety() {
   }
   if (process.env.DELETE_USERS?.trim()) {
     errors.push('DELETE_USERS is forbidden in production — clear it from the environment');
+  }
+
+  for (const msg of warnings) {
+    console.warn(`[production]  • ${msg}`);
   }
 
   if (errors.length) {

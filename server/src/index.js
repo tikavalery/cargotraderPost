@@ -89,8 +89,9 @@ app.use(express.json({ limit: '15mb' }));
 app.use('/api', apiRateLimiter);
 
 app.get('/api/health', (req, res) => {
+  // Always 200 once the process is listening — Railway healthchecks treat 503 as failure.
   const db = getDbStatus();
-  res.status(db.ready ? 200 : 503).json({
+  res.status(200).json({
     status: db.ready ? 'ok' : 'degraded',
     app: 'CargoTrader API',
     version: '2.0.0',

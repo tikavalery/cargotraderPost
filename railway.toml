@@ -6,8 +6,8 @@ builder = "NIXPACKS"
 buildCommand = "npm install --prefix server && npm run build --prefix server"
 
 [deploy]
-startCommand = "npm run db:migrate --prefix server && npm start --prefix server"
+startCommand = "npm run start:railway --prefix server"
 healthcheckPath = "/api/health"
-healthcheckTimeout = 100
+healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5
