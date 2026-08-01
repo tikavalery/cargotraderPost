@@ -86,13 +86,12 @@ app.post(
 app.post('/api/pos/mobile-money/webhook', express.json(), flutterwaveWebhookHandler);
 
 app.use(express.json({ limit: '15mb' }));
-app.use('/api', apiRateLimiter);
 
+// Health must be registered before the API rate limiter so Railway probes always reach it.
 app.get('/api/health', (req, res) => {
-  // Always 200 once the process is listening — Railway healthchecks treat 503 as failure.
   const db = getDbStatus();
   res.status(200).json({
-    status: db.ready ? 'ok' : 'degraded',
+    status: db.ready ? 'ok' : 'starting',
     app: 'CargoTrader API',
     version: '2.0.0',
     db,
@@ -109,6 +108,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.use('/api', apiRateLimiter);
 app.use('/api', apiRoutes);
 
 // Serve the Vite build whenever it exists (Heroku / production). Do not rely
@@ -132,6 +132,55 @@ if (serveClient) {
 
 app.use(notFound);
 app.use(errorHandler);
+
+console.log(
+  `[boot] NODE_ENV=${process.env.NODE_ENV || '(unset)'} PORT=${PORT} DATABASE_URL=${
+    process.env.DATABASE_URL ? 'set' : 'MISSING'
+  } JWT_SECRET=${process.env.JWT_SECRET ? 'set' : 'MISSING'}`
+);
+
+function startHttpServer() {
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    configureCloudinary();
+    console.log(`CargoTrader API v2 running on port ${PORT}`);
+    console.log(
+      isCloudinaryConfigured()
+        ? 'Cloudinary: configured (uploads → secure HTTPS URLs)'
+        : 'Cloudinary: not configured — uploads fall back to data URLs (set CLOUDINARY_* in .env)'
+    );
+    if (isCloudinaryConfigured()) {
+      const tlsFlag = (process.env.CLOUDINARY_TLS_REJECT_UNAUTHORIZED || '').trim().toLowerCase();
+      const tlsRelaxed =
+        tlsFlag === 'false' ||
+        tlsFlag === '0' ||
+        (tlsFlag === '' && process.env.NODE_ENV !== 'production');
+      if (tlsRelaxed) {
+        console.log(
+          'Cloudinary TLS: certificate verification relaxed (dev / CLOUDINARY_TLS_REJECT_UNAUTHORIZED=false)'
+        );
+      }
+    }
+    console.log('Subscription routes: /api/subscriptions/downgrade, /select-free, /sync');
+    console.log('Stripe routes: /api/stripe/customer-portal');
+    console.log('Stripe webhooks: invoice.payment_failed, invoice.payment_succeeded, customer.subscription.updated');
+    console.log('Flutterwave webhooks: POST /api/pos/mobile-money/webhook (charge.completed)');
+    logProductionReadiness();
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${PORT} in use — stop other process or change PORT in server/.env`);
+    } else {
+      console.error('Server error:', err.message);
+    }
+    process.exit(1);
+  });
+
+  return server;
+}
+
+// Listen first so Railway healthchecks pass while DB connects / warms up.
+startHttpServer();
 
 connectDB()
   .then(async () => {
@@ -170,33 +219,6 @@ connectDB()
         }
       }
     }
-    // Bind 0.0.0.0 so Railway / containers can reach the process.
-    const server = app.listen(PORT, '0.0.0.0', () => {
-      configureCloudinary();
-      console.log(`CargoTrader API v2 running on port ${PORT}`);
-      console.log(
-        isCloudinaryConfigured()
-          ? 'Cloudinary: configured (uploads → secure HTTPS URLs)'
-          : 'Cloudinary: not configured — uploads fall back to data URLs (set CLOUDINARY_* in .env)'
-      );
-      if (isCloudinaryConfigured()) {
-        const tlsFlag = (process.env.CLOUDINARY_TLS_REJECT_UNAUTHORIZED || '').trim().toLowerCase();
-        const tlsRelaxed =
-          tlsFlag === 'false' ||
-          tlsFlag === '0' ||
-          (tlsFlag === '' && process.env.NODE_ENV !== 'production');
-        if (tlsRelaxed) {
-          console.log(
-            'Cloudinary TLS: certificate verification relaxed (dev / CLOUDINARY_TLS_REJECT_UNAUTHORIZED=false)'
-          );
-        }
-      }
-      console.log('Subscription routes: /api/subscriptions/downgrade, /select-free, /sync');
-      console.log('Stripe routes: /api/stripe/customer-portal');
-      console.log('Stripe webhooks: invoice.payment_failed, invoice.payment_succeeded, customer.subscription.updated');
-      console.log('Flutterwave webhooks: POST /api/pos/mobile-money/webhook (charge.completed)');
-      logProductionReadiness();
-    });
 
     const GRACE_SWEEP_MS = 60 * 60 * 1000;
     setInterval(() => {
@@ -206,17 +228,10 @@ connectDB()
     }, GRACE_SWEEP_MS);
 
     startTrackingPoller();
-
-    server.on('error', (err) => {
-      if (err.code === 'EADDRINUSE') {
-        console.error(`Port ${PORT} in use — stop other process or change PORT in server/.env`);
-      } else {
-        console.error('Server error:', err.message);
-      }
-      process.exit(1);
-    });
   })
   .catch((err) => {
     console.error('DB connection failed:', err.message);
-    process.exit(1);
+    console.error(
+      '[boot] HTTP is up for healthchecks, but API data routes will fail until DATABASE_URL is fixed.'
+    );
   });

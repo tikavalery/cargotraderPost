@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "node src/index.js",
     "start": "node src/index.js",
-    "start:railway": "node scripts/railway-start.js",
+    "start:railway": "prisma migrate deploy; node src/index.js",
     "postinstall": "prisma generate",
     "build": "prisma generate",
     "db:migrate": "prisma migrate deploy",
