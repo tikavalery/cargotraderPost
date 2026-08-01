@@ -1,0 +1,785 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String    @id @default(cuid())
+  name                   String
+  email                  String?   @unique
+  phone                  String?   @unique
+  googleId               String?   @unique
+  authProvider           String    @default("local")
+  password               String?
+  role                   String    @default("Business Owner")
+  countriesOperated      String[]  @default([])
+  preferredCurrencies    String[]  @default([])
+  preferredCurrency      String    @default("XAF")
+  businesses             Json      @default("[]")
+  defaultBusinessId      String?
+  refreshTokenHash       String?
+  passwordResetTokenHash String?
+  passwordResetExpires   DateTime?
+  twoFactorEnabled       Boolean   @default(false)
+  isActive               Boolean   @default(true)
+  lastLoginAt            DateTime?
+  gracePeriodEnd         DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  ownedBusinesses Business[] @relation("BusinessOwner")
+
+  @@map("users")
+}
+
+model Business {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String?  @unique
+  ownerId         String
+  owner           User     @relation("BusinessOwner", fields: [ownerId], references: [id])
+  country         String   @default("Cameroon")
+  currencies      String[] @default([])
+  address         String?
+  taxId           String?
+  inventoryGroups String[] @default([])
+  members         Json     @default("[]")
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  items              Item[]
+  warehouses         Warehouse[]
+  stockMovements     StockMovement[]
+  warehouseStaff     WarehouseStaff[]
+  warehouseLogs      WarehouseLog[]
+  warehouseDamages   WarehouseDamage[]
+  bales              Bale[]
+  purchases          Purchase[]
+  suppliers          Supplier[]
+  shipments          Shipment[]
+  shipmentDocuments  ShipmentDocument[]
+  trackingEvents     TrackingEvent[]
+  stores             Store[]
+  storeLogs          StoreLog[]
+  posTransactions    PosTransaction[]
+  heldSales          HeldSale[]
+  registerSessions   RegisterSession[]
+  posCustomers       PosCustomer[]
+  promoCodes         PromoCode[]
+  salesReturns       SalesReturn[]
+  sales              Sale[]
+  financeEntries     FinanceEntry[]
+  subscription       Subscription?
+  staffInvitations   StaffInvitation[]
+  notifications      Notification[]
+
+  @@map("businesses")
+}
+
+model Item {
+  id                   String   @id @default(cuid())
+  businessId           String
+  business             Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  itemId               String   @default("")
+  sku                  String
+  name                 String
+  category             String   @default("Clothes")
+  group                String?
+  qty                  Float    @default(0)
+  reorder              Float    @default(5)
+  location             String   @default("")
+  status               String   @default("Stored")
+  grade                String   @default("A")
+  purchasePrice        Float    @default(0)
+  purchaseValue        Float    @default(0)
+  targetPrice          Float    @default(0)
+  priceXaf             Float    @default(0)
+  value                Float    @default(0)
+  currency             String   @default("XAF")
+  supplierId           String?
+  purchaseId           String?
+  sourcedFromPurchaseId String  @default("")
+  purchaseDate         String?
+  photos               String[] @default([])
+  icon                 String   @default("fa-box")
+  color                String   @default("#8A97A8")
+  warehouseId          String?
+  warehouse            Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  storeId              String   @default("")
+  baleId               String?
+  bale                 Bale?    @relation(fields: [baleId], references: [id], onDelete: SetNull)
+  shipmentId           String?
+  shipment             Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  purchaseRefId        String?
+  purchase             Purchase? @relation(fields: [purchaseRefId], references: [id], onDelete: SetNull)
+  createdById          String?
+  notes                String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([businessId])
+  @@index([category])
+  @@index([group])
+  @@index([status])
+  @@index([sourcedFromPurchaseId])
+  @@index([storeId])
+  @@index([businessId, sku])
+  @@index([businessId, name])
+  @@map("items")
+}
+
+model Warehouse {
+  id            String   @id @default(cuid())
+  businessId    String
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  warehouseId   String
+  name          String
+  flag          String   @default("🇨🇲")
+  address       String   @default("")
+  location      String   @default("")
+  country       String   @default("Cameroon")
+  status        String   @default("Operational")
+  capacityM3    Float    @default(200)
+  usedM3        Float    @default(0)
+  capacity      Float    @default(0)
+  used          Float    @default(0)
+  manager       String   @default("")
+  phone         String   @default("")
+  managerUserId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  items            Item[]
+  bales            Bale[]
+  shipments        Shipment[]
+  staff            WarehouseStaff[]
+  logs             WarehouseLog[]
+  damages          WarehouseDamage[]
+  stockFrom        StockMovement[] @relation("StockFrom")
+  stockTo          StockMovement[] @relation("StockTo")
+
+  @@unique([businessId, warehouseId])
+  @@index([businessId, name])
+  @@map("warehouses")
+}
+
+model StockMovement {
+  id              String   @id @default(cuid())
+  businessId      String
+  business        Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  type            String
+  fromWarehouseId String?
+  fromWarehouse   Warehouse? @relation("StockFrom", fields: [fromWarehouseId], references: [id], onDelete: SetNull)
+  toWarehouseId   String?
+  toWarehouse     Warehouse? @relation("StockTo", fields: [toWarehouseId], references: [id], onDelete: SetNull)
+  fromBaleId      String?
+  toBaleId        String?
+  itemId          String?
+  sku             String?
+  qty             Float
+  notes           String?
+  performedById   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([businessId])
+  @@map("stock_movements")
+}
+
+model WarehouseStaff {
+  id               String   @id @default(cuid())
+  businessId       String
+  business         Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  warehouseId      String
+  warehouse        Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  staffId          String
+  firstName        String
+  lastName         String   @default("")
+  role             String   @default("Associate")
+  department       String   @default("Operations")
+  email            String   @default("")
+  phone            String   @default("")
+  status           String   @default("Active")
+  shift            String   @default("Day")
+  startDate        String   @default("")
+  employeeId       String   @default("")
+  emergencyContact String   @default("")
+  emergencyPhone   String   @default("")
+  address          String   @default("")
+  notes            String   @default("")
+  avatarColor      String   @default("navy")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([businessId, warehouseId, staffId])
+  @@map("warehouse_staff")
+}
+
+model WarehouseLog {
+  id            String   @id @default(cuid())
+  businessId    String
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  warehouseId   String?
+  warehouse     Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  locationKind  String   @default("warehouse")
+  locationLabel String   @default("")
+  type          String
+  desc          String
+  date          String   @default("")
+  user          String   @default("System")
+  source        String   @default("")
+  qty           Float    @default(0)
+  ago           String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([businessId])
+  @@index([warehouseId])
+  @@index([locationKind])
+  @@map("warehouse_logs")
+}
+
+model WarehouseDamage {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  itemName    String
+  sku         String   @default("")
+  date        String   @default("")
+  type        String   @default("Damage")
+  status      String   @default("Pending")
+  notes       String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([businessId])
+  @@map("warehouse_damages")
+}
+
+model Bale {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  baleId     String
+  sku        String   @default("")
+  type       String   @default("Grouped Item")
+  name       String
+  category   String   @default("Clothes")
+  icon       String   @default("fa-boxes")
+  color      String   @default("#E85D26")
+  location   String   @default("")
+  status     String   @default("Stored")
+  weight     String   @default("")
+  buyValue   Float    @default(0)
+  value      Float    @default(0)
+  source     String   @default("")
+  itemCount  Float    @default(0)
+  totalUnits Float    @default(0)
+  items      Json     @default("[]")
+  warehouseId String?
+  warehouse  Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  shipmentId String?
+  shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  linkedItems Item[]
+
+  @@unique([businessId, baleId])
+  @@index([businessId, sku])
+  @@index([businessId, name])
+  @@index([category])
+  @@index([location])
+  @@map("bales")
+}
+
+model Purchase {
+  id           String    @id @default(cuid())
+  businessId   String
+  business     Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  purchaseId   String
+  status       String    @default("draft")
+  itemName     String    @default("")
+  sku          String    @default("")
+  category     String    @default("Clothes")
+  group        String?
+  quantity     Float     @default(1)
+  reorder      Float     @default(5)
+  location     String    @default("")
+  stockStatus  String    @default("Stored")
+  purchasePrice Float    @default(0)
+  purchaseValue Float    @default(0)
+  targetPrice  Float     @default(0)
+  value        Float     @default(0)
+  supplierId   String?
+  supplier     Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  purchaseDate DateTime?
+  notes        String    @default("")
+  photos       String[]  @default([])
+  restockOfId  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  items Item[]
+
+  @@unique([businessId, purchaseId])
+  @@index([restockOfId])
+  @@map("purchases")
+}
+
+model Supplier {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  supplierId String
+  name       String
+  city       String   @default("")
+  country    String   @default("CM")
+  email      String   @default("")
+  phone      String   @default("")
+  rating     Float    @default(4.0)
+  createdAt  DateTime @default(now())
+
+  purchases Purchase[]
+
+  @@unique([businessId, supplierId])
+  @@map("suppliers")
+}
+
+model Shipment {
+  id                 String    @id @default(cuid())
+  businessId         String
+  business           Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  shipmentId         String
+  trackingNumber     String    @default("")
+  origin             String
+  originFlag         String    @default("🇨🇳")
+  originCountry      String    @default("")
+  dest               String
+  destFlag           String    @default("🇨🇲")
+  destCountry        String    @default("")
+  carrier            String    @default("TBD")
+  shippingMethod     String    @default("ocean")
+  status             String    @default("In Transit")
+  statusBadge        String    @default("badge-transit")
+  eta                String?
+  items              Float     @default(0)
+  weight             String?
+  container          String?
+  landedCostUsd      Float     @default(0)
+  goodsCost          Float     @default(0)
+  shippingCost       Float     @default(0)
+  dutiesCost         Float     @default(0)
+  salesRevenue       Float     @default(0)
+  currency           String    @default("XAF")
+  warehouseRefId     String?
+  warehouse          Warehouse? @relation(fields: [warehouseRefId], references: [id], onDelete: SetNull)
+  warehouseId        String    @default("")
+  warehouseName      String?
+  baleCount          Float     @default(0)
+  individualCount    Float     @default(0)
+  insurancePct       Float     @default(2)
+  dutyPct            Float     @default(18)
+  vatPct             Float     @default(19.25)
+  clearingCost       Float     @default(0)
+  mode               String    @default("active")
+  currentCity        String    @default("")
+  currentCountry     String    @default("")
+  lastLocationUpdate DateTime?
+  statusHistory      Json      @default("[]")
+  tracking           Json      @default("{}")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  linkedItems Item[]
+  bales       Bale[]
+
+  @@unique([businessId, shipmentId])
+  @@index([trackingNumber])
+  @@index([status])
+  @@index([mode])
+  @@map("shipments")
+}
+
+model ShipmentDocument {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  docId      String
+  shipmentId String
+  name       String
+  type       String   @default("invoice")
+  fileUrl    String   @default("")
+  fileName   String   @default("")
+  fileSize   String   @default("")
+  route      String   @default("")
+  status     String   @default("pending")
+  notes      String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([businessId, docId])
+  @@index([shipmentId])
+  @@index([status])
+  @@map("shipment_documents")
+}
+
+model TrackingEvent {
+  id             String   @id @default(cuid())
+  businessId     String
+  business       Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  shipmentId     String
+  trackingNumber String   @default("")
+  carrier        String   @default("")
+  status         String
+  carrierStatus  String   @default("")
+  description    String
+  location       String   @default("")
+  city           String   @default("")
+  country        String   @default("")
+  occurredAt     DateTime
+  source         String   @default("mock")
+  notified       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([businessId, shipmentId, carrierStatus, description])
+  @@index([businessId, shipmentId, occurredAt])
+  @@map("tracking_events")
+}
+
+model Store {
+  id            String   @id @default(cuid())
+  businessId    String
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  storeId       String
+  name          String
+  icon          String   @default("🏪")
+  address       String   @default("")
+  city          String   @default("")
+  locationToken String   @default("")
+  manager       String   @default("")
+  phone         String   @default("")
+  shelfTarget   Float    @default(100)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  logs StoreLog[]
+
+  @@unique([businessId, storeId])
+  @@map("stores")
+}
+
+model StoreLog {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  storeIdRef String
+  store      Store    @relation(fields: [storeIdRef], references: [id], onDelete: Cascade)
+  storeId    String
+  type       String
+  desc       String
+  date       String   @default("")
+  user       String   @default("System")
+  source     String   @default("")
+  qty        Float    @default(0)
+  ago        String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([businessId, storeId, createdAt])
+  @@map("store_logs")
+}
+
+model PosTransaction {
+  id                 String    @id @default(cuid())
+  businessId         String
+  business           Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  storeId            String
+  storeName          String    @default("")
+  transactionId      String
+  date               DateTime  @default(now())
+  customerId         String?
+  customerName       String    @default("Walk-in Customer")
+  lines              Json      @default("[]")
+  subtotal           Float     @default(0)
+  discount           Float     @default(0)
+  tax                Float     @default(0)
+  total              Float     @default(0)
+  payment            String    @default("Cash")
+  paymentStatus      String    @default("paid")
+  inventoryFinalized Boolean   @default(false)
+  mobileMoney        Json?
+  tendered           Float     @default(0)
+  change             Float     @default(0)
+  itemCount          Float     @default(0)
+  promoCode          String?
+  status             String    @default("completed")
+  refundedTotal      Float     @default(0)
+  returnReason       String?
+  cashierId          String?
+  cashierName        String?
+  deletedAt          DateTime?
+  deleteReason       String    @default("")
+  deletedById        String?
+  deletedByName      String    @default("")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  salesReturns SalesReturn[]
+
+  @@unique([businessId, transactionId])
+  @@index([storeId])
+  @@index([date])
+  @@index([paymentStatus])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("pos_transactions")
+}
+
+model HeldSale {
+  id           String   @id @default(cuid())
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  storeId      String
+  heldId       String
+  customerName String   @default("Walk-in Customer")
+  cart         Json     @default("[]")
+  subtotal     Float    @default(0)
+  discount     Float    @default(0)
+  total        Float    @default(0)
+  discType     String   @default("pct")
+  discVal      Float    @default(0)
+  promoCode    String?
+  payment      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([businessId, heldId])
+  @@index([storeId])
+  @@map("held_sales")
+}
+
+model RegisterSession {
+  id               String    @id @default(cuid())
+  businessId       String
+  business         Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  storeId          String
+  cashierId        String?
+  open             Boolean   @default(true)
+  openedAt         DateTime  @default(now())
+  closedAt         DateTime?
+  openingFloat     Float     @default(50000)
+  dayTotal         Float     @default(0)
+  transactionCount Float     @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([businessId, storeId, open])
+  @@map("register_sessions")
+}
+
+model PosCustomer {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name       String
+  phone      String   @default("")
+  email      String   @default("")
+  isWalkIn   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([businessId])
+  @@map("pos_customers")
+}
+
+model PromoCode {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  code        String
+  discountPct Float
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([businessId, code])
+  @@map("promo_codes")
+}
+
+model SalesReturn {
+  id                    String   @id @default(cuid())
+  businessId            String
+  business              Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  returnId              String
+  originalTransactionId String
+  posTransactionId      String?
+  posTransaction        PosTransaction? @relation(fields: [posTransactionId], references: [id], onDelete: SetNull)
+  storeId               String
+  storeName             String   @default("")
+  returnedById          String?
+  returnedByName        String   @default("")
+  refundMethod          String   @default("Cash")
+  refundAmount          Float
+  reason                String   @default("")
+  status                String   @default("Completed")
+  items                 Json     @default("[]")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([businessId, returnId])
+  @@index([originalTransactionId])
+  @@index([storeId])
+  @@index([status])
+  @@map("sales_returns")
+}
+
+model Sale {
+  id            String   @id @default(cuid())
+  businessId    String
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  saleId        String
+  source        String   @default("POS")
+  storeName     String   @default("Main Store")
+  warehouseId   String?
+  lines         Json     @default("[]")
+  items         Json     @default("[]")
+  subtotal      Float    @default(0)
+  tax           Float    @default(0)
+  total         Float    @default(0)
+  currency      String   @default("XAF")
+  paymentMethod String   @default("Cash")
+  status        String   @default("completed")
+  customerName  String?
+  customerPhone String?
+  cashierId     String?
+  orderId       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([businessId, saleId])
+  @@index([source])
+  @@map("sales")
+}
+
+model FinanceEntry {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  entryId     String?
+  type        String
+  date        DateTime @default(now())
+  description String   @default("")
+  source      String   @default("Manual")
+  category    String   @default("")
+  amount      Float
+  currency    String   @default("XAF")
+  amountXaf   Float    @default(0)
+  reference   String   @default("")
+  shipmentId  String   @default("")
+  linkedId    String?
+  auto        Boolean  @default(false)
+  receipts    String[] @default([])
+  products    Json     @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([businessId])
+  @@index([type])
+  @@index([date])
+  @@index([source])
+  @@index([amountXaf])
+  @@index([linkedId])
+  @@index([entryId])
+  @@map("finance_entries")
+}
+
+model Subscription {
+  id                    String    @id @default(cuid())
+  businessId            String    @unique
+  business              Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  plan                  String    @default("free")
+  status                String    @default("active")
+  billingInterval       String?
+  stripeCustomerId      String    @default("")
+  stripeSubscriptionId  String    @default("")
+  stripePriceId         String    @default("")
+  currentPeriodEnd      DateTime?
+  cancelAtPeriodEnd     Boolean   @default(false)
+  pendingPlan           String?
+  pendingPlanEffectiveAt DateTime?
+  gracePeriodEnd        DateTime?
+  aiAnalysesMonthKey    String    @default("")
+  aiAnalysesCount       Float     @default(0)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([plan])
+  @@index([stripeSubscriptionId])
+  @@map("subscriptions")
+}
+
+model StripeWebhookEvent {
+  id          String   @id @default(cuid())
+  eventId     String   @unique
+  type        String   @default("")
+  processedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("stripe_webhook_events")
+}
+
+model StaffInvitation {
+  id                 String    @id @default(cuid())
+  businessId         String
+  business           Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  invitedById        String
+  email              String?
+  phone              String?
+  role               String
+  assignedStoreId    String    @default("")
+  assignedWarehouses String[]  @default([])
+  tokenHash          String    @unique
+  status             String    @default("pending")
+  expiresAt          DateTime
+  acceptedAt         DateTime?
+  acceptedUserId     String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([businessId, email, status])
+  @@index([businessId, phone, status])
+  @@index([status])
+  @@map("staff_invitations")
+}
+
+model Notification {
+  id         String   @id @default(cuid())
+  userId     String
+  businessId String?
+  business   Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  type       String   @default("system")
+  title      String
+  message    String   @default("")
+  link       String?
+  read       Boolean  @default(false)
+  meta       Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+  @@index([businessId])
+  @@index([read])
+  @@map("notifications")
+}

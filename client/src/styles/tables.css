@@ -1,0 +1,371 @@
+/* Responsive data tables — all columns visible without horizontal scroll */
+
+.content,
+.main-content,
+.settings-layout,
+.settings-main,
+.inv-layout,
+.fin-card,
+.ship-card,
+.table-card,
+.fw-table-card,
+.pur-table-card,
+.module-nav-row,
+.page-header,
+.toolbar,
+.inv-action-bar,
+.table-controls,
+.pur-toolbar,
+.cf-toolbar,
+.pl-toolbar,
+.staff-toolbar {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.toolbar,
+.inv-action-bar,
+.table-controls,
+.pur-toolbar,
+.cf-toolbar,
+.pl-toolbar,
+.staff-toolbar {
+  flex-wrap: wrap;
+  overflow-x: hidden;
+}
+
+.toolbar .filter-select,
+.inv-action-bar .filter-select,
+.table-filter-select {
+  flex: 1 1 100px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.content {
+  overflow-x: hidden;
+}
+
+/* Table scroll shells — vertical only when needed */
+.table-scroll-x,
+.table-wrap,
+.fin-table-wrap,
+.ship-table-wrapper,
+.doc-table-wrapper,
+.history-table-wrapper,
+.pur-table-scroll,
+.staff-table-card .table-wrap,
+.pricing-table-wrap,
+.cf-table-wrap,
+.pl-table-wrap,
+.table-h-track,
+.settings-main .table-scroll-x {
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* Inventory (and similar) nested scroll regions must clip + scroll vertically */
+.fin-table-wrap.cf-table-wrap,
+.pl-table-wrap,
+.cf-table-wrap {
+  overflow-x: auto;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Inventory items: let the page content scroll so rows are never clipped to 0-height flex areas */
+.content.inv-scroll-layout .table-wrap,
+.inv-items-page .table-wrap {
+  overflow-x: auto;
+  overflow-y: visible;
+  min-height: 0;
+}
+
+/* Fit data tables to viewport width (shipment tables use .at-responsive-table cards ≤1100px) */
+.inv-table,
+.fin-table,
+.doc-table,
+.history-table,
+.pur-data-table,
+.stock-table,
+.staff-table,
+.damage-table,
+.bale-items-table,
+.sup-table,
+.sup-dir-table,
+.inv-scan-results-table,
+.settings-table,
+.pricing-table,
+.pl-table,
+.pl-table-mvp,
+.cf-table,
+.cf-table-mvp,
+.pos-return-items-table,
+.pos-transactions-table {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: clamp(9px, 1.05vw, 13px);
+}
+
+.ship-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.pl-statement {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: clamp(10px, 1.05vw, 13px);
+}
+
+/* Headers wrap on narrow screens */
+.inv-table thead th,
+.fin-table thead th,
+.doc-table thead th,
+.history-table thead th,
+.pur-data-table thead th,
+.stock-table thead th,
+.staff-table thead th,
+.damage-table thead th,
+.bale-items-table thead th,
+.sup-table thead th,
+.inv-scan-results-table thead th,
+.settings-table thead th,
+.pricing-table thead th,
+.pl-table thead th,
+.cf-table thead th,
+.pos-return-items-table thead th,
+.pos-transactions-table thead th,
+.pl-statement thead th {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+  vertical-align: bottom;
+  padding: clamp(4px, 0.7vw, 10px) clamp(3px, 0.5vw, 12px);
+  font-size: clamp(7px, 0.9vw, 10px);
+  letter-spacing: 0.2px;
+}
+
+/* Body cells wrap */
+.inv-table tbody td,
+.fin-table tbody td,
+.doc-table tbody td,
+.history-table tbody td,
+.pur-data-table tbody td,
+.stock-table tbody td,
+.staff-table tbody td,
+.damage-table tbody td,
+.bale-items-table tbody td,
+.sup-table tbody td,
+.inv-scan-results-table tbody td,
+.settings-table tbody td,
+.pricing-table tbody td,
+.pl-table tbody td,
+.cf-table tbody td,
+.pos-return-items-table tbody td,
+.pos-transactions-table tbody td,
+.pl-statement tbody td {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  vertical-align: middle;
+  line-height: 1.35;
+  padding: clamp(4px, 0.7vw, 12px) clamp(3px, 0.5vw, 12px);
+}
+
+.fin-table tfoot td,
+.pl-table tfoot td,
+.cf-table tfoot td {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Compact controls may wrap inside cells */
+.ship-table .action-cell,
+.ship-table .tbl-btn {
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.fin-table-actions,
+.inv-table .action-btns,
+.staff-actions-col {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.settings-table-actions {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.notes-cell {
+  max-width: none;
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.inv-table .notes-cell {
+  max-width: none;
+  min-width: 0;
+}
+
+.pl-route,
+.cf-desc,
+.doc-table-name,
+.doc-table-file {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Dashboard / section lists */
+.dash-ship-list,
+.ship-detail-tabs,
+.module-nav-row {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .inv-table,
+  .fin-table,
+  .doc-table,
+  .history-table,
+  .pur-data-table,
+  .stock-table,
+  .staff-table,
+  .damage-table,
+  .settings-table,
+  .pricing-table,
+  .pl-table,
+  .cf-table {
+    font-size: 10px;
+  }
+
+  .inv-table thead th,
+  .fin-table thead th,
+  .doc-table thead th,
+  .history-table thead th,
+  .pur-data-table thead th,
+  .stock-table thead th,
+  .staff-table thead th,
+  .damage-table thead th,
+  .settings-table thead th,
+  .pricing-table thead th,
+  .pl-table thead th,
+  .cf-table thead th {
+    font-size: 8px;
+    padding: 5px 2px;
+  }
+
+  .inv-table tbody td,
+  .fin-table tbody td,
+  .doc-table tbody td,
+  .history-table tbody td,
+  .pur-data-table tbody td,
+  .stock-table tbody td,
+  .staff-table tbody td,
+  .damage-table tbody td,
+  .settings-table tbody td,
+  .pricing-table tbody td,
+  .pl-table tbody td,
+  .cf-table tbody td {
+    padding: 5px 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .inv-table,
+  .fin-table,
+  .doc-table,
+  .history-table,
+  .pur-data-table,
+  .stock-table,
+  .staff-table,
+  .damage-table,
+  .settings-table,
+  .pricing-table,
+  .pl-table,
+  .cf-table {
+    font-size: 9px;
+  }
+
+  .inv-table thead th,
+  .fin-table thead th,
+  .doc-table thead th,
+  .history-table thead th,
+  .pur-data-table thead th,
+  .stock-table thead th,
+  .staff-table thead th,
+  .damage-table thead th,
+  .settings-table thead th,
+  .pricing-table thead th,
+  .pl-table thead th,
+  .cf-table thead th {
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+}
+
+/* Documents table: keep every cell on a single line (overrides wrap rules above) */
+.doc-table tbody td {
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doc-table tbody td:first-child,
+.doc-table tbody td.action-cell {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.doc-table-name,
+.doc-table-file,
+.doc-route-text {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.doc-route-cell {
+  font-size: 11px;
+}
+
+.doc-route-text {
+  font-size: inherit;
+}

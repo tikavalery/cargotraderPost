@@ -1,0 +1,257 @@
+
+/* ============================================================
+   Responsive record cards (tablets & phones)
+   Tables with .at-responsive-table become stacked cards ≤1100px.
+   Each <td data-label="..."> shows its label via ::before.
+   ============================================================ */
+
+.at-responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Select-all lives in thead on desktop; this bar replaces it on card layout */
+.at-mobile-select-all {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+  padding: 10px 14px;
+  background: var(--white, #fff);
+  border: 1px solid var(--border, #E5EAF0);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.at-mobile-select-all-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark, #1A2B3C);
+  cursor: pointer;
+  user-select: none;
+}
+
+.at-mobile-select-all-input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary, #E67E22);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.at-mobile-select-all-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light, #8A97A8);
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .at-mobile-select-all {
+    display: flex;
+  }
+}
+
+@media (max-width: 1100px) {
+  .at-responsive-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .at-responsive-table,
+  .at-responsive-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .at-responsive-table tbody tr {
+    display: block;
+    width: 100%;
+    margin: 0 0 12px;
+    padding: 14px 16px;
+    background: var(--white, #fff);
+    border: 1px solid var(--border, #E5EAF0);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(15, 25, 40, 0.04);
+    box-sizing: border-box;
+  }
+
+  .at-responsive-table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .at-responsive-table tbody tr:hover {
+    filter: none;
+    background: #FAFBFC;
+  }
+
+  .at-responsive-table tbody td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 0 !important;
+    border: none !important;
+    border-bottom: 1px solid var(--border, #E5EAF0) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    text-align: right;
+    box-sizing: border-box;
+  }
+
+  .at-responsive-table tbody td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+  }
+
+  .at-responsive-table tbody td:first-child {
+    padding-top: 0 !important;
+  }
+
+  .at-responsive-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    max-width: 42%;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--text-light, #8A97A8);
+    text-align: left;
+    padding-top: 2px;
+  }
+
+  .at-responsive-table tbody td.at-card-hide-label {
+    justify-content: flex-start;
+  }
+
+  .at-responsive-table tbody td.at-card-hide-label::before {
+    content: none !important;
+  }
+
+  .at-responsive-table tbody td:not([data-label])::before,
+  .at-responsive-table tbody td[data-label=""]::before {
+    content: none !important;
+  }
+
+  .at-responsive-table tbody td.at-card-actions,
+  .at-responsive-table tbody td.action-cell,
+  .at-responsive-table tbody td.pos-txn-actions {
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .at-responsive-table .fin-table-actions,
+  .at-responsive-table .action-cell,
+  .at-responsive-table .pos-txn-actions,
+  .at-responsive-table .at-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+
+  .at-responsive-table tbody td[colspan] {
+    display: block;
+    text-align: center;
+    border-bottom: none !important;
+  }
+
+  .at-responsive-table tbody td[colspan]::before {
+    content: none !important;
+  }
+
+  .at-responsive-table tbody td.inv-check-cell,
+  .at-responsive-table tbody td.pur-check-col {
+    justify-content: flex-start;
+  }
+
+  .table-wrap:has(.at-responsive-table),
+  .fin-table-wrap:has(.at-responsive-table),
+  .history-table-wrapper:has(.at-responsive-table),
+  .pur-table-scroll:has(.at-responsive-table),
+  .ship-table-wrapper:has(.at-responsive-table),
+  .table-scroll-x:has(.at-responsive-table),
+  .staff-table-card .table-wrap:has(.at-responsive-table) {
+    overflow-x: visible;
+  }
+
+  .doc-table.at-responsive-table tbody td {
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+  }
+
+  .doc-table.at-responsive-table .doc-table-name,
+  .doc-table.at-responsive-table .doc-route-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .at-responsive-table tbody tr {
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+
+  .at-responsive-table tbody td {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    text-align: left;
+  }
+
+  .at-responsive-table tbody td::before {
+    max-width: none;
+  }
+
+  .at-responsive-table tbody td.at-card-actions,
+  .at-responsive-table tbody td.action-cell,
+  .at-responsive-table tbody td.pos-txn-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow: visible;
+  }
+
+  .at-responsive-table tbody td.at-card-actions::before,
+  .at-responsive-table tbody td.action-cell::before,
+  .at-responsive-table tbody td.pos-txn-actions::before {
+    flex: 0 0 100%;
+    width: auto;
+    max-width: none;
+    margin-bottom: 0;
+  }
+
+  .at-responsive-table tbody td.at-card-actions .btn-action-icon,
+  .at-responsive-table tbody td.action-cell .btn-action-icon,
+  .at-responsive-table tbody td.pos-txn-actions .btn-action-icon,
+  .at-responsive-table tbody td.at-card-actions .tbl-btn,
+  .at-responsive-table tbody td.action-cell .tbl-btn,
+  .at-responsive-table tbody td.pos-txn-actions .tbl-btn-view,
+  .at-responsive-table tbody td.pos-txn-actions .tbl-btn-return,
+  .at-responsive-table tbody td.pos-txn-actions .tbl-btn-delete {
+    flex: 0 0 auto;
+  }
+}

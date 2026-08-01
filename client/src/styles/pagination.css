@@ -1,0 +1,149 @@
+/**
+ * Shared table pagination — app colors (primary orange, secondary navy).
+ * Layout: “Showing X–Y of Z” · Previous · page nums · Next · optional page size.
+ */
+.tbl-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.tbl-pagination-info {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-mid);
+}
+
+.tbl-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.tbl-pg-nav {
+  border: none;
+  background: transparent;
+  color: var(--text-dark);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+
+.tbl-pg-nav:hover:not(:disabled) {
+  color: var(--primary);
+}
+
+.tbl-pg-nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.tbl-pg-pages {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--white);
+}
+
+.tbl-pg-num {
+  min-width: 34px;
+  height: 32px;
+  padding: 0 10px;
+  border: none;
+  border-right: 1px solid var(--border);
+  background: var(--white);
+  color: var(--text-dark);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.tbl-pg-num:last-child {
+  border-right: none;
+}
+
+.tbl-pg-num:hover:not(:disabled):not(.is-active) {
+  background: rgba(26, 60, 94, 0.06);
+}
+
+.tbl-pg-num.is-active {
+  background: var(--secondary);
+  color: #fff;
+}
+
+.tbl-pg-num:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.tbl-pg-next {
+  height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(232, 93, 38, 0.25);
+}
+
+.tbl-pg-next:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.tbl-pg-next:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.tbl-pg-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-mid);
+}
+
+.tbl-pg-size select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-dark);
+}
+
+@media (max-width: 640px) {
+  .tbl-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tbl-pagination-controls {
+    margin-left: 0;
+    justify-content: space-between;
+  }
+
+  .tbl-pg-size {
+    justify-content: flex-end;
+  }
+}

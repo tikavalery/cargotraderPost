@@ -1,0 +1,178 @@
+/* Shared navbar user profile menu */
+.nav-user-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.nav-user-trigger {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav-user-trigger:hover,
+.nav-user-trigger[aria-expanded='true'] {
+  border-color: rgba(232, 93, 38, 0.35);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-user-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nav-user-avatar-primary {
+  background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
+}
+
+.nav-user-chevron {
+  font-size: 10px;
+  color: var(--text-light);
+  margin-left: 2px;
+  transition: transform 0.15s ease;
+}
+
+.nav-user-chevron.open {
+  transform: rotate(180deg);
+}
+
+.nav-user-dropdown {
+  min-width: 220px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.12));
+  z-index: 500;
+  padding: 8px 0;
+  animation: nav-user-drop-in 0.15s ease;
+}
+
+@keyframes nav-user-drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nav-user-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+}
+
+.nav-user-dropdown-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--secondary), #3498db);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.nav-user-dropdown-meta {
+  min-width: 0;
+}
+
+.nav-user-dropdown-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-user-dropdown-email,
+.nav-user-dropdown-business {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-user-dropdown-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.nav-user-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-mid);
+  cursor: pointer;
+  text-align: left;
+}
+
+.nav-user-dropdown-item i {
+  width: 16px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.nav-user-dropdown-item:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--text-dark);
+}
+
+.nav-user-dropdown-item:hover:not(:disabled) i {
+  color: var(--primary);
+}
+
+.nav-user-dropdown-item.danger {
+  color: var(--danger);
+}
+
+.nav-user-dropdown-item.danger i {
+  color: var(--danger);
+}
+
+.nav-user-dropdown-item.danger:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.08);
+  color: var(--danger);
+}
+
+.nav-user-dropdown-item:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+@media (max-width: 640px) {
+  .ship-user-pill .ship-user-name,
+  .ship-user-pill .ship-role-badge,
+  .ship-user-pill .pos-cashier-badge {
+    display: none;
+  }
+
+  .ship-user-pill {
+    padding: 4px;
+  }
+
+  .nav-user-chevron {
+    display: none;
+  }
+}

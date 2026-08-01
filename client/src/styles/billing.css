@@ -1,0 +1,132 @@
+.payment-failure-banner {
+  background: linear-gradient(90deg, #9a3412 0%, #c2410c 45%, #ea580c 100%);
+  color: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(154, 52, 18, 0.25);
+}
+
+.payment-failure-banner-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 12px 20px;
+}
+
+.payment-failure-banner-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.payment-failure-banner-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.payment-failure-banner-body strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.payment-failure-banner-body p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.96;
+}
+
+.payment-failure-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.payment-failure-banner-btn {
+  background: #fff !important;
+  color: #9a3412 !important;
+  border: none !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.payment-failure-banner-btn:hover {
+  background: #fff7ed !important;
+}
+
+.payment-failure-banner-dismiss {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-failure-banner-dismiss:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 768px) {
+  .payment-failure-banner-inner {
+    flex-wrap: wrap;
+  }
+
+  .payment-failure-banner-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+.checkout-help-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  color: #9a3412;
+}
+
+.checkout-help-banner i.fa-info-circle {
+  margin-top: 2px;
+  font-size: 18px;
+}
+
+.checkout-help-banner strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.checkout-help-banner p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.checkout-help-dismiss {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: #9a3412;
+  cursor: pointer;
+  padding: 4px;
+}

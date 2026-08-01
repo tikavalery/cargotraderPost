@@ -1,0 +1,32 @@
+import api from '../api';
+
+export const financeApi = {
+  sync: () => api.post('/finance/sync'),
+  dashboard: (params) => api.get('/finance/dashboard', { params }),
+  revenueOverview: (params) => api.get('/finance/revenue/overview', { params }),
+  revenueSummary: (params) => api.get('/finance/revenue/summary', { params }),
+  revenueTrend: (params) => api.get('/finance/revenue/trend', { params }),
+  revenueSales: (params) => api.get('/finance/revenue/sales', { params }),
+  revenueCategories: (params) => api.get('/finance/revenue/categories', { params }),
+  revenueWarehouses: (params) => api.get('/finance/revenue/warehouses', { params }),
+  createRevenue: (data) => api.post('/finance/revenue', data),
+  getRevenue: (id) => api.get(`/finance/revenue/${id}`),
+  updateRevenue: (id, data) => api.put(`/finance/revenue/${id}`, data),
+  deleteRevenue: (id) => api.delete(`/finance/revenue/${id}`),
+  expensesOverview: (params) => api.get('/finance/expenses/overview', { params }),
+  expensesSummary: (params) => api.get('/finance/expenses/summary', { params }),
+  expensesCategories: (params) => api.get('/finance/expenses/categories', { params }),
+  expensesTrend: (params) => api.get('/finance/expenses/trend', { params }),
+  expensesList: (params) => api.get('/finance/expenses/list', { params }),
+  expensesInsights: (params) => api.get('/finance/expenses/insights', { params }),
+  createExpense: (data) => api.post('/finance/expenses', data),
+  analyzeExpenseImage: (images) => api.post('/finance/expenses/analyze-image', { images }),
+  getExpense: (id) => api.get(`/finance/expenses/${id}`),
+  updateExpense: (id, data) => api.put(`/finance/expenses/${id}`, data),
+  deleteExpense: (id) => api.delete(`/finance/expenses/${id}`),
+  cashFlow: (params) => api.get('/finance/cash-flow', { params }),
+  getCashFlowEntry: (id, params) => api.get(`/finance/cash-flow/${id}`, { params }),
+  deleteCashFlow: (id) => api.delete(`/finance/cash-flow/${id}`),
+  profitLoss: (params) => api.get('/finance/profit-loss', { params }),
+  exportFile: (params) => api.get('/finance/export/excel', { params, responseType: 'blob' })
+};

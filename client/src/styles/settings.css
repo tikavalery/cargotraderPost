@@ -1,0 +1,1537 @@
+.settings-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/*
+  Users & Staff / Profile: tabs sit above main content on all widths;
+  table/form use full content width (no left sidebar).
+*/
+.settings-layout.settings-layout-users,
+.settings-layout.settings-layout-profile {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+  grid-template-columns: none !important;
+}
+
+.settings-layout.settings-layout-users .settings-nav,
+.settings-layout.settings-layout-profile .settings-nav {
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  position: relative !important;
+  top: auto !important;
+  align-self: stretch !important;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  gap: 6px;
+  padding: 6px 8px;
+  margin: 0;
+}
+
+.settings-layout.settings-layout-users .settings-nav-item,
+.settings-layout.settings-layout-profile .settings-nav-item {
+  white-space: nowrap;
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  font-size: 12px;
+  gap: 6px;
+}
+
+.settings-layout.settings-layout-users .settings-main,
+.settings-layout.settings-layout-profile .settings-main {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding-top: 0;
+}
+
+.settings-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* Sticky only in desktop sidebar layout — never when stacked above the title */
+@media (min-width: 1101px) {
+  .settings-layout:not(.settings-layout-users):not(.settings-layout-profile) > .settings-nav {
+    position: sticky;
+    top: 0;
+    align-self: start;
+  }
+}
+
+.settings-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-mid);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.settings-nav-item:hover {
+  background: var(--bg);
+  color: var(--text-dark);
+}
+
+.settings-nav-item.active {
+  background: rgba(232, 93, 38, 0.1);
+  color: var(--primary);
+}
+
+.settings-nav-item i {
+  width: 16px;
+  text-align: center;
+}
+
+.settings-main {
+  min-width: 0;
+  position: relative;
+  z-index: 0;
+}
+
+.settings-section {
+  margin-bottom: 32px;
+}
+
+.settings-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--text-dark);
+}
+
+.settings-table {
+  border-collapse: collapse;
+}
+
+.settings-table thead th {
+  text-align: left;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-light);
+  background: #FAFBFC;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-table tbody td {
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.settings-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.settings-name-cell {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.settings-role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.settings-status-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.settings-status-pill.active {
+  background: rgba(39, 174, 96, 0.12);
+  color: #27AE60;
+}
+
+.settings-status-pill.inactive {
+  background: rgba(138, 151, 168, 0.15);
+  color: var(--text-light);
+}
+
+.settings-role-select {
+  height: 34px;
+  padding: 0 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-family: inherit;
+  background: var(--bg);
+  min-width: 150px;
+}
+
+.settings-row-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.settings-table-actions {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 6px;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.settings-table-actions .tbl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+}
+
+.settings-table-actions .tbl-btn-view { color: var(--primary); border-color: var(--primary); }
+.settings-table-actions .tbl-btn-view:hover { background: var(--primary-light); }
+.settings-table-actions .tbl-btn-edit { color: var(--secondary); border-color: rgba(26, 60, 94, 0.35); }
+.settings-table-actions .tbl-btn-edit:hover { background: rgba(26, 60, 94, 0.08); }
+.settings-table-actions .tbl-btn-delete { color: var(--text-mid); }
+.settings-table-actions .tbl-btn-delete:hover { border-color: var(--danger); color: var(--danger); background: rgba(231, 76, 60, 0.06); }
+.settings-table-actions .tbl-btn.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.settings-table-actions .tbl-btn.is-disabled:hover {
+  background: var(--white);
+  border-color: var(--border);
+  color: var(--text-mid);
+}
+
+.settings-view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.settings-view-field .settings-view-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.settings-view-field .settings-view-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .settings-view-grid { grid-template-columns: 1fr; }
+}
+
+.btn-sm {
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+}
+
+.btn-sm.danger {
+  color: var(--danger);
+  border-color: rgba(231, 76, 60, 0.35);
+}
+
+.btn-sm.danger:hover {
+  background: rgba(231, 76, 60, 0.08);
+}
+
+.settings-empty,
+.settings-empty-cell {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-light);
+}
+
+.settings-form-error {
+  background: rgba(231, 76, 60, 0.08);
+  border: 1px solid rgba(231, 76, 60, 0.25);
+  color: var(--danger);
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.settings-invite-success {
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.settings-invite-success i {
+  font-size: 36px;
+  color: var(--success);
+  margin-bottom: 12px;
+}
+
+.settings-invite-success p {
+  font-size: 14px;
+  color: var(--text-mid);
+  margin-bottom: 16px;
+}
+
+.settings-invite-link-box {
+  text-align: left;
+  margin-top: 8px;
+}
+
+.settings-invite-link-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.settings-invite-link-row .form-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.settings-invite-link-row .btn-secondary {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.settings-warehouse-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: rgba(26, 60, 94, 0.04);
+}
+
+.settings-check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text, #1a3c5e);
+  cursor: pointer;
+  min-height: 40px;
+  padding: 6px 0;
+  line-height: 1.35;
+}
+
+.settings-check-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.settings-check-row input {
+  accent-color: #10b981;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.settings-billing-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.settings-profile-page .settings-billing-section {
+  margin-top: 28px;
+  padding: 22px;
+  padding-top: 22px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-billing-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-dark);
+}
+
+.settings-billing-desc {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.5;
+  margin-bottom: 14px;
+  max-width: 520px;
+}
+
+.settings-billing-btn i {
+  margin-right: 8px;
+}
+
+/* —— Danger zone (owner account deletion) —— */
+.settings-danger-zone {
+  margin-top: 28px;
+  padding: 22px;
+  background: rgba(231, 76, 60, 0.04);
+  border: 1px solid rgba(231, 76, 60, 0.35);
+  border-radius: var(--radius-lg);
+}
+
+.settings-danger-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--danger);
+}
+
+.settings-danger-desc {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.5;
+  margin: 0 0 14px;
+  max-width: 520px;
+}
+
+.settings-danger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.settings-danger-btn:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+.settings-danger-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.settings-danger-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.settings-danger-confirm-hint {
+  font-size: 13px;
+  color: var(--text-mid);
+  margin: 0;
+}
+
+.settings-danger-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* —— Profile settings page —— */
+.settings-profile-page {
+  width: 100%;
+  max-width: 560px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.settings-panel-header {
+  margin: 0 0 24px;
+}
+
+.settings-panel-title {
+  margin: 0;
+  font-size: clamp(1.25rem, 2vw + 0.8rem, 1.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  color: var(--text-dark);
+  overflow-wrap: anywhere;
+}
+
+.settings-panel-desc {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-light);
+  max-width: 36rem;
+}
+
+.settings-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 22px 22px 24px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
+}
+
+.settings-profile-form .form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.settings-profile-form .form-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.settings-profile-form .form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+}
+
+.settings-profile-form .form-input,
+.settings-profile-form .form-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--text-dark);
+  box-sizing: border-box;
+}
+
+.settings-profile-form .form-input:focus,
+.settings-profile-form .form-select:focus {
+  border-color: var(--primary);
+  background: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(232, 93, 38, 0.12);
+}
+
+.settings-profile-form .form-input:disabled {
+  color: var(--text-mid);
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.settings-form-actions {
+  margin-top: 28px;
+  padding-top: 4px;
+}
+
+.settings-profile-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11px 20px;
+  width: auto;
+  min-width: 160px;
+}
+
+.app-shell--settings-profile .navbar {
+  height: auto;
+  min-height: var(--navbar-h);
+  align-items: flex-start;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.app-shell--settings-profile .navbar-left {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.app-shell--settings-profile .navbar-breadcrumb {
+  white-space: normal !important;
+  max-width: 100%;
+}
+
+@media (max-width: 1100px) and (max-width: 640px) {
+  .settings-layout-profile .settings-panel-header {
+    margin-bottom: 20px;
+  }
+
+  .settings-profile-form {
+    padding: 20px 18px 22px;
+  }
+}
+
+@media (max-width: 640px) {
+  .settings-profile-page {
+    max-width: 100%;
+  }
+
+  .settings-panel-header {
+    margin-bottom: 18px;
+  }
+
+  .settings-panel-title {
+    font-size: clamp(1.15rem, 5vw, 1.35rem);
+  }
+
+  .settings-panel-desc {
+    margin-top: 8px;
+    font-size: 12px;
+  }
+
+  .settings-profile-form {
+    padding: 18px 16px 20px;
+  }
+
+  .settings-profile-form .form-group {
+    margin-bottom: 22px;
+  }
+
+  .settings-profile-form .form-input,
+  .settings-profile-form .form-select {
+    font-size: 16px; /* avoid iOS zoom */
+  }
+
+  .settings-form-actions {
+    margin-top: 24px;
+  }
+
+  .settings-profile-save {
+    width: 100%;
+  }
+
+  .settings-profile-page .settings-billing-section {
+    margin-top: 24px;
+    padding: 18px 16px;
+  }
+
+  .app-shell--settings-profile .navbar {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .app-shell--settings-profile .navbar-breadcrumb .breadcrumb-segment:first-child {
+    display: none;
+  }
+
+  .app-shell--settings-profile .navbar-breadcrumb .breadcrumb-segment:nth-child(2) .breadcrumb-sep {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-shell--settings-profile .navbar-breadcrumb .breadcrumb-segment:not(:last-child) {
+    display: none;
+  }
+}
+
+/* —— Users & Staff page —— */
+.content.settings-layout.settings-layout-users {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.settings-users-page {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.settings-users-header {
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 22px;
+  padding-top: 0;
+}
+
+.settings-users-header-text {
+  min-width: 0;
+  flex: 1 1 12rem;
+  max-width: 100%;
+}
+
+.settings-users-title {
+  margin: 0;
+  max-width: 100%;
+  font-size: clamp(1.15rem, 2.4vw + 0.7rem, 1.5rem) !important;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.settings-users-sub {
+  margin: 8px 0 0;
+  max-width: 40rem;
+  font-size: clamp(0.75rem, 0.7rem + 0.35vw, 0.8125rem) !important;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.settings-users-section-title {
+  margin: 0 0 14px;
+  max-width: 100%;
+  font-size: clamp(0.875rem, 0.8rem + 0.4vw, 1rem) !important;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.settings-users-header-actions {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.settings-invite-btn {
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.settings-users-table-card {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.settings-users-page .settings-role-badge,
+.settings-users-page .settings-status-pill {
+  max-width: 100%;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.settings-users-page .settings-assignment-cell,
+.settings-users-page .settings-contact-cell,
+.settings-users-page .settings-login-cell,
+.settings-users-page .settings-name-cell {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.settings-users-page .settings-table-actions {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.settings-users-page .settings-table-actions .tbl-btn {
+  flex: 0 0 auto;
+}
+
+.settings-users-page .plan-usage-banner {
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+.settings-users-page .plan-usage-banner strong,
+.settings-users-page .plan-usage-banner span,
+.settings-users-page .plan-usage-policy {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Navbar titles on Users & Staff */
+.app-shell--settings-users .navbar {
+  height: auto;
+  min-height: var(--navbar-h);
+  align-items: flex-start;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.app-shell--settings-users .navbar-left {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.app-shell--settings-users .navbar-breadcrumb {
+  white-space: normal !important;
+  max-width: 100%;
+}
+
+.app-shell--settings-users .breadcrumb-current,
+.app-shell--settings-users .breadcrumb-link {
+  white-space: normal;
+}
+
+.settings-staff-modal .inv-modal-title {
+  max-width: 100%;
+  font-size: clamp(1rem, 0.95rem + 0.5vw, 1.125rem);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.settings-staff-modal .inv-modal-sub {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Always keep staff edit/invite/view sheets fully on-screen */
+.settings-staff-modal.inv-modal-overlay.open {
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-staff-modal .inv-modal,
+.settings-staff-modal .inv-modal-lg {
+  max-height: min(90dvh, calc(100dvh - 32px));
+  overflow: hidden;
+  min-height: 0;
+}
+
+.settings-staff-modal .inv-modal > form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.settings-staff-modal .inv-modal-header,
+.settings-staff-modal .inv-modal-footer {
+  flex-shrink: 0;
+}
+
+.settings-staff-modal .inv-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Desktop / laptop: readable table (override global clamp + fixed layout) */
+@media (min-width: 1101px) {
+  .settings-users-page .settings-users-table {
+    table-layout: auto;
+    font-size: 13px;
+  }
+
+  .settings-users-page .settings-users-table thead th,
+  .settings-users-page .settings-users-table tbody td {
+    font-size: 13px !important;
+    padding: 12px 14px !important;
+    white-space: normal;
+    line-height: 1.35;
+  }
+
+  .settings-users-page .settings-users-table thead th {
+    font-size: 11px !important;
+    letter-spacing: 0.35px;
+  }
+
+  .settings-users-page .settings-users-table th:nth-child(1),
+  .settings-users-page .settings-users-table td:nth-child(1) {
+    min-width: 120px;
+  }
+
+  .settings-users-page .settings-users-table th:last-child,
+  .settings-users-page .settings-users-table td:last-child {
+    width: 1%;
+    min-width: 118px;
+    white-space: nowrap !important;
+    vertical-align: middle;
+  }
+
+  .settings-users-page .settings-table-actions {
+    display: inline-flex;
+    flex-wrap: nowrap;
+  }
+
+  .settings-users-page .settings-table-actions .tbl-btn {
+    min-width: 34px;
+    min-height: 34px;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1440px) {
+  .settings-layout:not(.settings-layout-users):not(.settings-layout-profile) {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .settings-users-page .settings-users-table thead th,
+  .settings-users-page .settings-users-table tbody td {
+    padding: 14px 16px !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .content.settings-layout {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .settings-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 28px;
+  }
+
+  .settings-nav {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    position: relative !important;
+    top: auto !important;
+    z-index: 1;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    gap: 10px;
+    padding: 10px 12px;
+    margin: 0;
+  }
+
+  .settings-main {
+    z-index: 0;
+    margin: 0;
+    padding-top: 0;
+  }
+
+  .settings-layout-users .settings-users-header {
+    margin-top: 0;
+    margin-bottom: 8px;
+    padding-top: 0;
+  }
+
+  .settings-layout-users .settings-users-title {
+    position: relative;
+    z-index: 0;
+  }
+
+  .settings-nav-item {
+    white-space: nowrap;
+    flex: 0 0 auto;
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .settings-users-section {
+    margin-bottom: 36px;
+  }
+
+  .settings-users-page .settings-users-table-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .settings-users-page .table-scroll-x {
+    overflow: visible;
+  }
+
+  .settings-users-page .settings-table-actions {
+    width: auto;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  .settings-users-page .settings-table-actions .tbl-btn {
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 14px;
+  }
+
+  .settings-warehouse-checklist {
+    max-height: min(220px, 40vh);
+  }
+
+  /* Card mode: keep field labels readable (override tables.css tiny clamp) */
+  .settings-users-page .at-responsive-table tbody td {
+    font-size: 13px !important;
+  }
+
+  .settings-users-page .at-responsive-table tbody td::before {
+    font-size: 10px !important;
+    letter-spacing: 0.35px;
+  }
+}
+
+@media (max-width: 640px) {
+  /*
+    Users & Staff phones: navbar + compact settings tabs + invite ≈ under 1/5.
+    Title/subtitle hidden (breadcrumb covers it). Same orange/green.
+  */
+  .app-shell--settings-users {
+    --navbar-h: 48px;
+  }
+
+  .content.settings-layout {
+    padding: 16px 14px;
+  }
+
+  .content.settings-layout.settings-layout-users {
+    padding: 6px 12px 20px;
+  }
+
+  .settings-layout {
+    gap: 28px;
+  }
+
+  .settings-layout-users {
+    gap: 10px;
+  }
+
+  .settings-nav {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .settings-layout-users .settings-nav {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+
+  .settings-nav-item {
+    padding: 11px 14px;
+  }
+
+  .settings-layout-users .settings-nav-item {
+    padding: 7px 10px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .settings-users-title {
+    font-size: clamp(1.1rem, 5.2vw, 1.35rem) !important;
+  }
+
+  .settings-users-sub {
+    font-size: 0.75rem !important;
+    margin-top: 10px;
+  }
+
+  .settings-users-section-title {
+    font-size: 0.9rem !important;
+    margin-bottom: 16px;
+  }
+
+  .settings-layout-users .settings-users-header {
+    margin: 0 0 8px !important;
+    gap: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .settings-layout-users .settings-users-header-text {
+    display: none;
+  }
+
+  .settings-layout-users .settings-users-header-actions,
+  .settings-layout-users .settings-invite-btn {
+    width: auto;
+  }
+
+  .settings-layout-users .settings-invite-btn {
+    display: inline-flex;
+    align-items: center;
+    min-width: 36px;
+    min-height: 36px;
+    height: 36px;
+    padding: 0 10px;
+    gap: 0;
+    justify-content: center;
+    box-shadow: none;
+  }
+
+  .settings-layout-users .settings-chrome-label {
+    display: none;
+  }
+
+  /* Breadcrumb: keep current page title visible; drop root on narrow screens */
+  .app-shell--settings-users .navbar {
+    padding: 0 10px;
+  }
+
+  .app-shell--settings-users .navbar-breadcrumb .breadcrumb-segment:first-child {
+    display: none;
+  }
+
+  .app-shell--settings-users .navbar-breadcrumb .breadcrumb-segment:nth-child(2) .breadcrumb-sep {
+    display: none;
+  }
+
+  .app-shell--settings-users .navbar-actions {
+    flex-shrink: 0;
+  }
+
+  .settings-invite-link-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .settings-invite-link-row .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .settings-users-page .plan-usage-banner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+
+  .settings-users-page .plan-usage-banner .btn-sm,
+  .settings-users-page .plan-usage-remaining {
+    width: 100%;
+    text-align: left;
+  }
+
+  .settings-users-page .plan-usage-banner .btn-sm {
+    display: inline-flex;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 40px;
+  }
+
+  .settings-empty,
+  .settings-empty-cell {
+    padding: 28px 16px;
+  }
+
+  /*
+   * Staff modals: keep the full sheet on-screen (header + form + footer).
+   * Previous bottom-sheet alignment let tall forms clip the top (name field).
+   */
+  .settings-staff-modal.inv-modal-overlay.open {
+    align-items: center;
+    justify-content: center;
+    padding:
+      max(16px, env(safe-area-inset-top, 0px))
+      12px
+      max(16px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .settings-staff-modal .inv-modal,
+  .settings-staff-modal .inv-modal-lg {
+    width: 100%;
+    max-width: min(520px, calc(100vw - 24px));
+    max-height: min(90dvh, calc(100dvh - 32px));
+    border-radius: 16px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .settings-staff-modal .inv-modal > form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .settings-staff-modal .inv-modal-header {
+    flex-shrink: 0;
+    padding: 18px 20px 14px;
+    gap: 12px;
+  }
+
+  .settings-staff-modal .inv-modal-title {
+    font-size: clamp(1.05rem, 4.5vw, 1.2rem);
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .settings-staff-modal .inv-modal-sub {
+    margin-top: 6px;
+    line-height: 1.45;
+  }
+
+  .settings-staff-modal .inv-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 20px;
+  }
+
+  .settings-staff-modal .form-group {
+    margin-bottom: 16px;
+  }
+
+  .settings-staff-modal .inv-modal-footer {
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+    gap: 10px;
+    padding: 14px 20px 16px;
+  }
+
+  .settings-staff-modal .inv-modal-footer .btn-primary,
+  .settings-staff-modal .inv-modal-footer .btn-ghost {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 0;
+  }
+
+  .settings-staff-modal .form-input,
+  .settings-staff-modal .form-select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content.settings-layout {
+    padding: 14px 12px;
+  }
+
+  .settings-layout {
+    gap: 24px;
+  }
+
+  .settings-nav {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .settings-nav-item {
+    font-size: 12px;
+    padding: 11px 14px;
+  }
+
+  .settings-nav-item i {
+    display: none;
+  }
+
+  .settings-staff-modal.inv-modal-overlay.open {
+    padding:
+      max(12px, env(safe-area-inset-top, 0px))
+      10px
+      max(12px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .settings-staff-modal .inv-modal,
+  .settings-staff-modal .inv-modal-lg {
+    max-height: min(92dvh, calc(100dvh - 24px));
+    max-width: calc(100vw - 20px);
+  }
+
+  .settings-staff-modal .inv-modal-header {
+    padding: 16px 18px 12px;
+  }
+
+  /* On phones show only the current breadcrumb title */
+  .app-shell--settings-users .navbar-breadcrumb .breadcrumb-segment:not(:last-child) {
+    display: none;
+  }
+
+  .settings-users-page .settings-table-actions {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+    width: auto;
+  }
+
+  .settings-users-page .settings-table-actions .tbl-btn {
+    width: auto;
+    min-width: 40px;
+    min-height: 44px;
+  }
+
+  .settings-users-page .at-responsive-table tbody td.at-card-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .settings-users-page .at-responsive-table tbody td.at-card-actions::before {
+    flex: 0 0 100%;
+    margin-bottom: 0;
+  }
+}
+
+/*
+  Users & Profile tablet+: collapse page chrome (~1/5 former height).
+  Must override max-width 1100/1280 stacked-header rules.
+  Phones (≤640) keep existing stacked / icon-only rules above.
+*/
+@media (min-width: 641px) {
+  /* —— Users & Staff —— */
+  .settings-layout-users .settings-users-header,
+  .settings-layout-users .page-header.settings-users-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    margin: 0 0 6px !important;
+    padding: 0 !important;
+  }
+
+  .settings-layout-users .settings-users-header-text {
+    display: block !important;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .settings-layout-users .settings-users-title {
+    font-size: 15px !important;
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    margin: 0 !important;
+  }
+
+  .settings-layout-users .settings-users-sub,
+  .settings-layout-users .page-sub.settings-users-sub {
+    display: none !important;
+  }
+
+  .settings-layout-users .settings-users-header-actions,
+  .settings-layout-users .settings-invite-btn {
+    width: auto !important;
+    flex: 0 0 auto !important;
+  }
+
+  .settings-layout-users .settings-invite-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+    gap: 6px;
+    min-height: 28px !important;
+    height: 28px !important;
+    min-width: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .settings-layout-users .settings-users-section {
+    margin-bottom: 12px !important;
+  }
+
+  .settings-layout-users .settings-users-section-title {
+    font-size: 12px !important;
+    margin: 0 0 6px !important;
+  }
+
+  .settings-layout-users .plan-usage-banner {
+    margin-bottom: 6px !important;
+    padding: 8px 12px !important;
+  }
+
+  .settings-layout-users .settings-nav {
+    padding: 6px 8px !important;
+    gap: 4px !important;
+  }
+
+  .settings-layout-users .settings-nav-item {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    gap: 6px;
+  }
+
+  /* —— Profile —— */
+  .settings-layout-profile .settings-panel-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px;
+    margin: 0 0 6px !important;
+  }
+
+  .settings-layout-profile .settings-panel-title {
+    font-size: 15px !important;
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    margin: 0 !important;
+  }
+
+  .settings-layout-profile .settings-panel-desc {
+    display: none !important;
+  }
+
+  .settings-layout-profile .settings-profile-form {
+    padding: 10px 12px 12px !important;
+  }
+
+  .settings-layout-profile .settings-profile-form .form-group {
+    margin-bottom: 10px !important;
+  }
+
+  .settings-layout-profile .settings-profile-form .form-label {
+    margin-bottom: 4px !important;
+    font-size: 10px !important;
+  }
+
+  .settings-layout-profile .settings-profile-form .form-input,
+  .settings-layout-profile .settings-profile-form .form-select {
+    min-height: 34px !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+  }
+
+  .settings-layout-profile .settings-form-actions {
+    margin-top: 10px !important;
+  }
+
+  .settings-layout-profile .settings-profile-save {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    min-height: 32px !important;
+  }
+
+  .settings-layout-profile .settings-billing-section,
+  .settings-layout-profile .settings-profile-page .settings-billing-section {
+    margin-top: 10px !important;
+    padding: 10px 12px !important;
+  }
+
+  .settings-layout-profile .settings-billing-title {
+    font-size: 13px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .settings-layout-profile .settings-nav {
+    padding: 6px 8px !important;
+    gap: 4px !important;
+  }
+
+  .settings-layout-profile .settings-nav-item {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1280px) {
+  .settings-layout-users .settings-chrome-label {
+    display: none !important;
+  }
+
+  .settings-layout-users .settings-invite-btn {
+    padding: 4px 8px !important;
+    gap: 0 !important;
+    min-width: 28px !important;
+    width: auto !important;
+  }
+}
+
+/* Dense chrome: class-based so layout selectors cannot undo it (≥641 only) */
+@media (min-width: 641px) {
+  .page-chrome-dense.page-header,
+  .page-chrome-dense.settings-users-header,
+  .page-chrome-dense.settings-panel-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    margin: 0 0 6px !important;
+    padding: 0 !important;
+    min-height: 28px !important;
+  }
+
+  .page-chrome-dense .page-chrome-dense-hide,
+  .page-chrome-dense-hide {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+  }
+
+  .page-chrome-dense .settings-users-title,
+  .page-chrome-dense .settings-panel-title,
+  .page-chrome-dense h1 {
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.2px !important;
+  }
+
+  .page-chrome-dense .settings-invite-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: auto !important;
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+    box-shadow: none !important;
+  }
+
+  /* Profile form denser so the chrome change is obvious with the form */
+  .settings-layout-profile .settings-profile-page {
+    max-width: 100%;
+  }
+}
