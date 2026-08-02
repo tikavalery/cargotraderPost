@@ -404,15 +404,49 @@
     padding: 0 10px;
   }
 
+  .app-shell--new-purchase .navbar-left {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+  }
+
   .app-shell--new-purchase .navbar-title {
     font-size: 13px;
-    max-width: 42vw;
+    max-width: 100%;
+  }
+
+  .app-shell--new-purchase .navbar-breadcrumb {
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Phones: show only the current page name — avoid wrapping under actions */
+  .app-shell--new-purchase .navbar-breadcrumb .breadcrumb-segment:not(:last-child) {
+    display: none;
+  }
+
+  .app-shell--new-purchase .navbar-breadcrumb .breadcrumb-current {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
   }
 
   .app-shell--new-purchase .navbar-actions {
     flex-shrink: 0;
     gap: 5px;
     z-index: 2;
+  }
+
+  .app-shell--new-purchase .navbar .lang-toggle {
+    transform: scale(0.92);
+    transform-origin: right center;
   }
 
   .pur-new-page {
@@ -772,33 +806,45 @@
   .app-shell--suppliers .navbar {
     gap: 6px;
     padding: 0 10px;
+    align-items: center;
   }
 
   .app-shell--all-purchases .navbar-left,
   .app-shell--suppliers .navbar-left {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
-    max-width: calc(100% - 148px);
+    max-width: min(42vw, 160px);
   }
 
   .app-shell--all-purchases .navbar-breadcrumb,
   .app-shell--suppliers .navbar-breadcrumb {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    font-size: 12px;
-    gap: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    gap: 0;
   }
 
-  .app-shell--all-purchases .navbar-breadcrumb .breadcrumb-segment:first-child,
-  .app-shell--suppliers .navbar-breadcrumb .breadcrumb-segment:first-child {
+  /* Phones: only the current page name — no stacked “Purchases / All Purchases” */
+  .app-shell--all-purchases .navbar-breadcrumb .breadcrumb-segment:not(:last-child),
+  .app-shell--suppliers .navbar-breadcrumb .breadcrumb-segment:not(:last-child) {
     display: none;
   }
 
-  .app-shell--all-purchases .navbar-breadcrumb .breadcrumb-segment:nth-child(2) .breadcrumb-sep,
-  .app-shell--suppliers .navbar-breadcrumb .breadcrumb-segment:nth-child(2) .breadcrumb-sep {
-    display: none;
+  .app-shell--all-purchases .navbar-breadcrumb .breadcrumb-current,
+  .app-shell--suppliers .navbar-breadcrumb .breadcrumb-current {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow-wrap: normal;
   }
 
   .app-shell--all-purchases .navbar .search-bar,
@@ -812,7 +858,11 @@
   .app-shell--all-purchases .navbar .search-bar input,
   .app-shell--suppliers .navbar .search-bar input {
     min-width: 0;
+    width: 100%;
     height: 34px;
+    font-size: 13px;
+    padding-left: 36px;
+    padding-right: 10px;
   }
 
   .app-shell--all-purchases .navbar-actions,
@@ -821,11 +871,14 @@
     gap: 5px;
     margin-left: 0;
     z-index: 2;
+    align-items: center;
   }
 
   .app-shell--all-purchases .navbar .lang-toggle,
   .app-shell--suppliers .navbar .lang-toggle {
     flex-shrink: 0;
+    transform: scale(0.9);
+    transform-origin: center right;
   }
 
   .pur-all-page,
@@ -1078,8 +1131,106 @@
 }
 .pur-bulk-btn.pur-bulk-delete:hover:not(:disabled) { background: #c0392b; border-color: #c0392b; }
 
+/* Hidden on desktop; phones show a fixed bottom dock when rows are selected */
+.pur-mobile-bulk-dock {
+  display: none;
+}
+
 .pur-empty-cell { text-align: center; padding: 24px; color: var(--text-light); font-size: 12px; }
 .pur-error-cell { color: var(--danger); }
+
+@media (max-width: 640px) {
+  /* Top/footer bulk chrome is cramped — use bottom dock instead */
+  .pur-all-page .pur-selection-bar {
+    display: none;
+  }
+
+  .pur-all-page .pur-table-footer .pur-bulk-actions {
+    display: none;
+  }
+
+  .pur-mobile-bulk-dock {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    margin: 0;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 14px rgba(15, 25, 40, 0.1);
+  }
+
+  .pur-mobile-bulk-count {
+    flex: 0 0 auto;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(232, 93, 38, 0.12);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 22px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .pur-mobile-bulk-actions {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .pur-mobile-bulk-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pur-mobile-bulk-actions .pur-bulk-btn {
+    flex: 0 0 auto;
+    padding: 6px 8px;
+    font-size: 11px;
+    gap: 4px;
+    min-height: 32px;
+    white-space: nowrap;
+  }
+
+  .pur-mobile-bulk-actions .pur-bulk-btn:disabled {
+    opacity: 0.45;
+  }
+
+  @media (max-width: 430px) {
+    .pur-mobile-bulk-actions .pur-mobile-bulk-label {
+      display: none;
+    }
+
+    .pur-mobile-bulk-actions .pur-bulk-btn {
+      padding: 6px 9px;
+      gap: 0;
+    }
+  }
+
+  .pur-table-card--bulk-dock {
+    padding-bottom: 52px;
+  }
+
+  .pur-all-page.pur-all-page--has-selection,
+  .pur-all-page:has(.pur-table-card--bulk-dock) {
+    padding-bottom: 56px;
+  }
+}
 
 @media (max-width: 768px) {
   .pur-table-card .pur-data-table {
@@ -1328,14 +1479,17 @@
     margin-bottom: 12px;
     border: 1px solid var(--border, #e5e7eb);
     border-radius: 8px;
-    padding: 8px;
+    padding: 10px 12px;
   }
   .pur-bulk-lines-table td {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    align-items: center;
+    gap: 12px;
     border: none;
-    padding: 6px 4px;
+    padding: 8px 0;
+    width: auto !important;
+    min-width: 0;
   }
   .pur-bulk-lines-table td::before {
     content: attr(data-label);
@@ -1343,6 +1497,22 @@
     font-weight: 700;
     text-transform: uppercase;
     color: var(--text-light);
-    flex: 0 0 72px;
+    flex: 0 0 76px;
+  }
+  .pur-bulk-lines-table .form-input,
+  .pur-bulk-lines-table .form-select {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 16px; /* avoids iOS zoom; easier to tap */
+    border-radius: var(--radius, 8px);
+  }
+  .pur-bulk-lines-table td:last-child {
+    justify-content: flex-end;
+  }
+  .pur-bulk-lines-table td:last-child::before {
+    content: none;
   }
 }

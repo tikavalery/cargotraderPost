@@ -210,7 +210,6 @@
 @media (max-width: 480px) {
   .at-responsive-table tbody tr {
     padding: 12px 14px;
-    margin-bottom: 10px;
   }
 
   .at-responsive-table tbody td {
@@ -253,5 +252,89 @@
   .at-responsive-table tbody td.pos-txn-actions .tbl-btn-return,
   .at-responsive-table tbody td.pos-txn-actions .tbl-btn-delete {
     flex: 0 0 auto;
+  }
+}
+
+/*
+  Smartphones: make each record card clearly separate across the app
+  (purchases, inventory, shipping, finance, stores, settings, etc.)
+*/
+@media (max-width: 640px) {
+  .table-card:has(.at-responsive-table),
+  .pur-table-card:has(.at-responsive-table),
+  .fin-table-card:has(.at-responsive-table),
+  .cf-table-card:has(.at-responsive-table),
+  .staff-table-card:has(.at-responsive-table),
+  .ship-table-card:has(.at-responsive-table),
+  .doc-table-card:has(.at-responsive-table),
+  .history-table-card:has(.at-responsive-table),
+  .wh-panel-card:has(.at-responsive-table) {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .table-wrap:has(.at-responsive-table),
+  .fin-table-wrap:has(.at-responsive-table),
+  .history-table-wrapper:has(.at-responsive-table),
+  .pur-table-scroll:has(.at-responsive-table),
+  .ship-table-wrapper:has(.at-responsive-table),
+  .table-scroll-x:has(.at-responsive-table),
+  .staff-table-card .table-wrap:has(.at-responsive-table),
+  .doc-table-wrap:has(.at-responsive-table) {
+    background: transparent;
+    padding: 2px 0 8px;
+  }
+
+  .at-responsive-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .at-responsive-table tbody tr {
+    margin: 0;
+    padding: 14px 14px 12px;
+    background: var(--white, #fff);
+    border: 1.5px solid var(--border, #d8dee8);
+    border-left: 4px solid var(--secondary, #1a3c5e);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 25, 40, 0.07);
+  }
+
+  .at-responsive-table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .at-responsive-table tbody tr:hover {
+    background: var(--white, #fff);
+  }
+
+  .at-responsive-table tbody tr.row-selected,
+  .at-responsive-table tbody tr.is-selected,
+  .at-responsive-table tbody tr.selected {
+    background: rgba(232, 93, 38, 0.08) !important;
+    border-color: rgba(232, 93, 38, 0.45);
+    border-left-color: var(--primary, #e85d26);
+    box-shadow: 0 2px 10px rgba(232, 93, 38, 0.12);
+  }
+
+  /* Empty / loading rows stay quiet */
+  .at-responsive-table tbody tr:has(td[colspan]) {
+    border-left-width: 1.5px;
+    border-left-color: var(--border, #d8dee8);
+    box-shadow: none;
+    background: var(--white, #fff);
+  }
+
+  .at-responsive-table tbody td {
+    padding: 9px 0 !important;
+  }
+
+  .at-mobile-select-all {
+    margin-bottom: 12px;
+    border: 1.5px solid var(--border, #d8dee8);
+    box-shadow: 0 1px 4px rgba(15, 25, 40, 0.05);
   }
 }

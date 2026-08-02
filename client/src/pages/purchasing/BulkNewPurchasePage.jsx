@@ -217,10 +217,11 @@ export default function BulkNewPurchasePage() {
 
   return (
     <AppShell
-      className="app-shell--new-purchase"
+      className="app-shell--new-purchase app-shell--bulk-new-purchase"
+      hideSearch
       breadcrumbs={[
         { label: 'CargoTrader', to: '/dashboard' },
-        { label: 'Buying / Purchases', to: '/purchasing/all' },
+        { label: 'Purchases', to: '/purchasing/all' },
         { label: 'Bulk New Purchase', current: true }
       ]}
     >
