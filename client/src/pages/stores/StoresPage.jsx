@@ -16,7 +16,7 @@ import { usePlanUsage } from '../../hooks/usePlanUsage';
 
 const BREADCRUMBS = [
   { label: 'CargoTrader', to: '/dashboard' },
-  { label: 'Stores & Sales', current: true }
+  { label: 'All Stores', current: true }
 ];
 
 export default function StoresPage() {

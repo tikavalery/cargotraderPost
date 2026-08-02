@@ -1292,11 +1292,114 @@ html, body {
 .stock-bulk-bar.visible { display: flex; }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 .stock-bulk-bar-left { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
-.stock-bulk-bar-actions { display: flex; gap: 8px; }
+.stock-bulk-bar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .btn-bulk-inline { padding: 8px 16px; background: var(--success); color: #fff; border: none; border-radius: var(--radius); font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
 .btn-bulk-inline:hover { background: #219a52; }
+.btn-bulk-inline:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn-bulk-clear-inline { padding: 8px 12px; background: transparent; color: rgba(255,255,255,0.75); border: none; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
 .btn-bulk-clear-inline:hover { color: #fff; }
+
+/* Hidden on desktop; phones show a fixed bottom dock */
+.stock-mobile-bulk-dock {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .stock-bulk-bar.visible {
+    display: none;
+  }
+
+  .stock-mobile-bulk-dock {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 205;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    margin: 0;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 14px rgba(15, 25, 40, 0.1);
+  }
+
+  /* Never cover Transfer / other overlay modals */
+  body:has(.wh-modal-overlay.open) .stock-mobile-bulk-dock,
+  body:has(.transfer-modal-overlay.open) .stock-mobile-bulk-dock {
+    display: none !important;
+  }
+
+  .stock-mobile-bulk-count {
+    flex: 0 0 auto;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(232, 93, 38, 0.12);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 22px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .stock-mobile-bulk-actions {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .stock-mobile-bulk-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stock-mobile-bulk-actions .btn-secondary,
+  .stock-mobile-bulk-actions .btn-bulk-delete {
+    flex: 0 0 auto;
+    padding: 6px 8px;
+    font-size: 11px;
+    gap: 4px;
+    min-height: 32px;
+    white-space: nowrap;
+  }
+
+  .stock-mobile-bulk-actions .btn-secondary:disabled,
+  .stock-mobile-bulk-actions .btn-bulk-delete:disabled {
+    opacity: 0.45;
+  }
+
+  @media (max-width: 430px) {
+    .stock-mobile-bulk-actions .stock-mobile-bulk-label {
+      display: none;
+    }
+
+    .stock-mobile-bulk-actions .btn-secondary,
+    .stock-mobile-bulk-actions .btn-bulk-delete {
+      padding: 6px 9px;
+      gap: 0;
+    }
+  }
+
+  /* Keep modal footer buttons above the bottom dock */
+  .fw-modal:has(.stock-mobile-bulk-dock) .fw-modal-footer {
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .fw-modal:has(.stock-mobile-bulk-dock) .fw-modal-body {
+    padding-bottom: 12px;
+  }
+}
 
 /* View item detail grid */
 .item-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; }

@@ -14,6 +14,7 @@ import ViewItemModal from '../inventory/modals/ViewItemModal';
 import Td from '../common/Td';
 import MobileSelectAllBar from '../common/MobileSelectAllBar';
 import TablePagination from '../common/TablePagination';
+import StockBulkSelectionBar from '../common/StockBulkSelectionBar';
 import TransferModal from '../warehouses/TransferModal';
 import { emitInventoryChanged } from '../../utils/inventoryEvents';
 import { exportShipmentItemsCsv, printPackingList } from '../../utils/shipmentExport';
@@ -315,26 +316,41 @@ export default function ShipmentDetailModal({
             ) : (
               <>
                 {selection.count > 0 && (
-                  <div className="stock-bulk-bar visible">
-                    <div className="stock-bulk-bar-left">{selection.count} selected</div>
-                    <div className="stock-bulk-bar-actions">
-                      <button type="button" className="btn-bulk-inline" disabled={selection.count !== 1} onClick={() => setViewItem(selection.selectedRows[0])}>
-                        <i className="fas fa-eye" /> View
-                      </button>
-                      {!readOnly && (
-                        <button type="button" className="btn-bulk-inline" onClick={() => openTransfer()}>
-                          <i className="fas fa-exchange-alt" /> Transfer Items
-                        </button>
-                      )}
-                      <button type="button" className="btn-bulk-inline" onClick={() => handleExportItems(selection.selectedRows)}>
-                        <i className="fas fa-file-excel" /> Export Items
-                      </button>
-                      <button type="button" className="btn-bulk-inline" onClick={() => handlePrintPackingList(selection.selectedRows)}>
-                        <i className="fas fa-print" /> Print Packing List
-                      </button>
-                      <button type="button" className="btn-bulk-clear-inline" onClick={selection.clearSelection}>Clear</button>
-                    </div>
-                  </div>
+                  <StockBulkSelectionBar
+                    count={selection.count}
+                    onClear={selection.clearSelection}
+                    actions={[
+                      {
+                        key: 'view',
+                        icon: 'fa-eye',
+                        label: 'View',
+                        onClick: () => setViewItem(selection.selectedRows[0]),
+                        disabled: selection.count !== 1
+                      },
+                      {
+                        key: 'transfer',
+                        icon: 'fa-exchange-alt',
+                        label: 'Transfer Items',
+                        shortLabel: 'Transfer',
+                        onClick: () => openTransfer(),
+                        hidden: readOnly
+                      },
+                      {
+                        key: 'export',
+                        icon: 'fa-file-excel',
+                        label: 'Export Items',
+                        shortLabel: 'Export',
+                        onClick: () => handleExportItems(selection.selectedRows)
+                      },
+                      {
+                        key: 'print',
+                        icon: 'fa-print',
+                        label: 'Print Packing List',
+                        shortLabel: 'Print',
+                        onClick: () => handlePrintPackingList(selection.selectedRows)
+                      }
+                    ]}
+                  />
                 )}
 
                 <div className="fw-table-card">

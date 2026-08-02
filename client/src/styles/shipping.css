@@ -561,10 +561,6 @@
     padding-left: unset;
     padding-right: unset;
   }
-  .doc-table.at-responsive-table tbody td.action-cell {
-    flex-wrap: nowrap;
-    white-space: nowrap;
-  }
   /* Card layout: keep each field value on one line */
   .doc-table.at-responsive-table tbody td {
     white-space: nowrap !important;
@@ -578,6 +574,31 @@
     white-space: nowrap;
     min-width: 0;
     flex: 1;
+  }
+  /* Actions: show buttons under label (do not clip with nowrap/overflow) */
+  .doc-table.at-responsive-table tbody td.action-cell,
+  .doc-table.at-responsive-table tbody td.at-card-actions {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    overflow: visible !important;
+    white-space: normal !important;
+    text-overflow: clip;
+    min-width: 0;
+    padding-bottom: 12px !important;
+  }
+  .doc-table.at-responsive-table tbody td.action-cell::before,
+  .doc-table.at-responsive-table tbody td.at-card-actions::before {
+    flex: 0 0 100%;
+    width: auto;
+    max-width: none;
+  }
+  .doc-table.at-responsive-table tbody td.action-cell .tbl-btn-icon,
+  .doc-table.at-responsive-table tbody td.at-card-actions .tbl-btn-icon {
+    flex: 0 0 auto;
   }
 }
 .doc-name-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }

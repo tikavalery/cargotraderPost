@@ -19,6 +19,7 @@ import ItemPhotoCell from '../inventory/ItemPhotoCell';
 import Td from '../common/Td';
 import MobileSelectAllBar from '../common/MobileSelectAllBar';
 import TablePagination from '../common/TablePagination';
+import StockBulkSelectionBar from '../common/StockBulkSelectionBar';
 
 const TAB_DEFS = [
   { id: 'stock', label: 'Stock List', icon: 'fa-boxes' },
@@ -302,35 +303,50 @@ export default function StoreInventoryPanel({
         {tab === 'stock' && (
           <>
         {selection.count > 0 && (
-          <div className="stock-bulk-bar visible">
-            <div className="stock-bulk-bar-left">{selection.count} selected</div>
-            <div className="stock-bulk-bar-actions">
-              <button type="button" className="btn-bulk-inline" onClick={handleExportSelected}>
-                <i className="fas fa-download" /> Export Selected
-              </button>
-              {canTransfer && (
-                <button type="button" className="btn-bulk-inline" onClick={() => openTransfer()}>
-                  <i className="fas fa-exchange-alt" /> Transfer Selected
-                </button>
-              )}
-              <button type="button" className="btn-bulk-inline" onClick={handlePrintLabels}>
-                <i className="fas fa-tags" /> Print Labels
-              </button>
-              {selection.count === 1 && (
-                <button type="button" className="btn-bulk-inline" onClick={openViewSelected}>
-                  <i className="fas fa-eye" /> View
-                </button>
-              )}
-              {canDelete && (
-                <button type="button" className="btn-bulk-delete" onClick={handleDeleteSelected}>
-                  <i className="fas fa-trash" /> Delete Selected
-                </button>
-              )}
-              <button type="button" className="btn-bulk-clear-inline" onClick={selection.clearSelection}>
-                Clear
-              </button>
-            </div>
-          </div>
+          <StockBulkSelectionBar
+            count={selection.count}
+            onClear={selection.clearSelection}
+            actions={[
+              {
+                key: 'export',
+                icon: 'fa-download',
+                label: 'Export Selected',
+                shortLabel: 'Export',
+                onClick: handleExportSelected
+              },
+              {
+                key: 'transfer',
+                icon: 'fa-exchange-alt',
+                label: 'Transfer Selected',
+                shortLabel: 'Transfer',
+                onClick: () => openTransfer(),
+                hidden: !canTransfer
+              },
+              {
+                key: 'labels',
+                icon: 'fa-tags',
+                label: 'Print Labels',
+                shortLabel: 'Labels',
+                onClick: handlePrintLabels
+              },
+              {
+                key: 'view',
+                icon: 'fa-eye',
+                label: 'View',
+                onClick: openViewSelected,
+                hidden: selection.count !== 1
+              },
+              {
+                key: 'delete',
+                icon: 'fa-trash',
+                label: 'Delete Selected',
+                shortLabel: 'Delete',
+                onClick: handleDeleteSelected,
+                danger: true,
+                hidden: !canDelete
+              }
+            ]}
+          />
         )}
 
         {error && <p style={{ color: 'var(--danger)', marginBottom: 12 }}>{error}</p>}

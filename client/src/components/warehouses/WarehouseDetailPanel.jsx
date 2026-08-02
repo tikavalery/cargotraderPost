@@ -8,6 +8,7 @@ import ViewItemModal from '../inventory/modals/ViewItemModal';
 import Td from '../common/Td';
 import MobileSelectAllBar from '../common/MobileSelectAllBar';
 import TablePagination from '../common/TablePagination';
+import StockBulkSelectionBar from '../common/StockBulkSelectionBar';
 import WarehouseStockItemModal from './WarehouseStockItemModal';
 import { inventoryItemsApi } from '../../api';
 import { emitInventoryChanged } from '../../utils/inventoryEvents';
@@ -291,44 +292,58 @@ export default function WarehouseDetailPanel({
               {tab === 'stock' && (
                 <>
                   {selection.count > 0 && (
-                    <div className="stock-bulk-bar visible">
-                      <div className="stock-bulk-bar-left">{selection.count} selected</div>
-                      <div className="stock-bulk-bar-actions">
-                        <button type="button" className="btn-bulk-inline" onClick={handleExportSelected}>
-                          <i className="fas fa-download" /> Export Selected
-                        </button>
-                        {!readOnly && (
-                          <button type="button" className="btn-bulk-inline" onClick={() => openTransfer()}>
-                            <i className="fas fa-exchange-alt" /> Transfer Selected Items
-                          </button>
-                        )}
-                        <button type="button" className="btn-bulk-inline" onClick={handlePrintLabels}>
-                          <i className="fas fa-tags" /> Print Labels
-                        </button>
-                        {selection.count === 1 && (
-                          <button type="button" className="btn-bulk-inline" onClick={openViewSelected}>
-                            <i className="fas fa-eye" /> View
-                          </button>
-                        )}
-                        {!readOnly && selection.count === 1 && (
-                          <button type="button" className="btn-bulk-inline" onClick={openEditSelected}>
-                            <i className="fas fa-pen" /> Edit
-                          </button>
-                        )}
-                        {!readOnly && (
-                          <button
-                            type="button"
-                            className="btn-bulk-inline"
-                            style={{ background: 'var(--danger)' }}
-                            onClick={handleBulkDelete}
-                            disabled={deleting}
-                          >
-                            <i className="fas fa-trash" /> Delete Selected
-                          </button>
-                        )}
-                        <button type="button" className="btn-bulk-clear-inline" onClick={selection.clearSelection}>Clear</button>
-                      </div>
-                    </div>
+                    <StockBulkSelectionBar
+                      count={selection.count}
+                      onClear={selection.clearSelection}
+                      actions={[
+                        {
+                          key: 'export',
+                          icon: 'fa-download',
+                          label: 'Export Selected',
+                          shortLabel: 'Export',
+                          onClick: handleExportSelected
+                        },
+                        {
+                          key: 'transfer',
+                          icon: 'fa-exchange-alt',
+                          label: 'Transfer Selected Items',
+                          shortLabel: 'Transfer',
+                          onClick: () => openTransfer(),
+                          hidden: readOnly
+                        },
+                        {
+                          key: 'labels',
+                          icon: 'fa-tags',
+                          label: 'Print Labels',
+                          shortLabel: 'Labels',
+                          onClick: handlePrintLabels
+                        },
+                        {
+                          key: 'view',
+                          icon: 'fa-eye',
+                          label: 'View',
+                          onClick: openViewSelected,
+                          hidden: selection.count !== 1
+                        },
+                        {
+                          key: 'edit',
+                          icon: 'fa-pen',
+                          label: 'Edit',
+                          onClick: openEditSelected,
+                          hidden: readOnly || selection.count !== 1
+                        },
+                        {
+                          key: 'delete',
+                          icon: 'fa-trash',
+                          label: 'Delete Selected',
+                          shortLabel: 'Delete',
+                          onClick: handleBulkDelete,
+                          danger: true,
+                          disabled: deleting,
+                          hidden: readOnly
+                        }
+                      ]}
+                    />
                   )}
 
                   <div className="fw-table-card">

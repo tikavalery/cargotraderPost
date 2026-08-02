@@ -36,61 +36,95 @@
   .app-shell--stores .navbar {
     gap: 6px;
     padding: 0 10px;
+    align-items: center;
   }
 
   .app-shell--stores .navbar-left {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     min-width: 0;
-    max-width: calc(100% - 118px);
+    max-width: min(32vw, 110px);
   }
 
   .app-shell--stores .navbar-breadcrumb {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    font-size: 12px;
-    gap: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    gap: 0;
   }
 
-  .app-shell--stores .navbar-breadcrumb .breadcrumb-segment:first-child {
+  /* Phones: only current title — avoid long “CargoTrader / …” wrap */
+  .app-shell--stores .navbar-breadcrumb .breadcrumb-segment:not(:last-child) {
     display: none;
   }
 
-  .app-shell--stores .navbar-breadcrumb .breadcrumb-segment:nth-child(2) .breadcrumb-sep {
-    display: none;
+  .app-shell--stores .navbar-breadcrumb .breadcrumb-current {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow-wrap: normal;
   }
 
   .app-shell--stores .navbar .search-bar {
-    flex: 1 1 0;
-    min-width: 0;
+    flex: 1 1 auto;
+    min-width: 108px;
     max-width: none;
-    margin: 0;
+    margin: 0 6px 0 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
   }
 
   .app-shell--stores .navbar .search-bar input {
     min-width: 0;
+    width: 100%;
     height: 34px;
+    font-size: 13px;
+    padding-left: 36px;
+    padding-right: 10px;
   }
 
   .app-shell--stores .navbar-actions {
+    flex: 0 0 auto;
     flex-shrink: 0;
-    gap: 5px;
+    gap: 6px;
     margin-left: 0;
     z-index: 2;
+    align-items: center;
+    position: relative;
+    background: var(--white);
+    padding-left: 2px;
   }
 
   .app-shell--stores .navbar .lang-toggle {
+    flex: 0 0 auto;
     flex-shrink: 0;
+    transform: none;
+  }
+
+  .app-shell--stores .navbar .lang-btn {
+    padding: 5px 8px;
   }
 
   .app-shell--stores .btn-add-store-nav {
-    padding: 6px 8px;
-    font-size: 12px;
+    padding: 0;
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
     gap: 0;
     min-width: 34px;
     justify-content: center;
+    align-items: center;
     transform: none;
+    border-radius: 8px;
   }
 
   .app-shell--stores .stores-chrome-label {
@@ -109,6 +143,26 @@
   .stores-landing-page .store-grid {
     gap: 12px;
     margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-shell--stores .navbar {
+    gap: 5px;
+    padding: 0 8px;
+  }
+
+  .app-shell--stores .navbar-left {
+    max-width: min(30vw, 96px);
+  }
+
+  .app-shell--stores .navbar .search-bar {
+    min-width: 96px;
+    margin-right: 4px;
+  }
+
+  .app-shell--stores .navbar-actions {
+    gap: 5px;
   }
 }
 
