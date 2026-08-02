@@ -35,8 +35,8 @@ const EMPTY_FORM = {
   eta: '',
   items: 0,
   weight: '',
-  goodsValue: 4800,
-  freight: 2000,
+  goodsValue: 0,
+  freight: 0,
   status: 'In Transit',
   warehouseId: '',
   warehouseName: ''
