@@ -9,7 +9,6 @@ const METHODS = [
   { id: 'traveler', label: 'Traveler Carry', icon: 'fa-suitcase' }
 ];
 
-const COUNTRIES = ['China', 'Turkey', 'UAE', 'USA', 'France', 'Cameroon', 'Nigeria'];
 const FLAG_MAP = { China: '🇨🇳', Turkey: '🇹🇷', UAE: '🇦🇪', USA: '🇺🇸', France: '🇫🇷', Cameroon: '🇨🇲', Nigeria: '🇳🇬' };
 
 const STATUSES = [
@@ -239,9 +238,14 @@ export default function NewShipmentModal({
                 </div>
                 <div>
                   <label className="form-label" htmlFor="ship-form-origin-country">Origin Country</label>
-                  <select id="ship-form-origin-country" className="form-input" value={form.originCountry} onChange={set('originCountry')}>
-                    {COUNTRIES.map((c) => <option key={c} value={c}>{FLAG_MAP[c]} {c}</option>)}
-                  </select>
+                  <input
+                    id="ship-form-origin-country"
+                    className="form-input"
+                    value={form.originCountry}
+                    onChange={set('originCountry')}
+                    placeholder="e.g. China"
+                    required
+                  />
                 </div>
               </div>
               <div className="form-grid-2">
@@ -251,9 +255,14 @@ export default function NewShipmentModal({
                 </div>
                 <div>
                   <label className="form-label" htmlFor="ship-form-dest-country">Destination Country</label>
-                  <select id="ship-form-dest-country" className="form-input" value={form.destCountry} onChange={set('destCountry')}>
-                    {COUNTRIES.map((c) => <option key={c} value={c}>{FLAG_MAP[c]} {c}</option>)}
-                  </select>
+                  <input
+                    id="ship-form-dest-country"
+                    className="form-input"
+                    value={form.destCountry}
+                    onChange={set('destCountry')}
+                    placeholder="e.g. Cameroon"
+                    required
+                  />
                 </div>
               </div>
 
