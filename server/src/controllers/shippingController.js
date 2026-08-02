@@ -9,6 +9,7 @@ import {
   formatDocumentRow,
   formatShipmentRow,
   nextShipmentId,
+  resolveClearingFee,
   resolveShipmentId,
   shipmentByIdFilter,
   statusBadgeForStatus
@@ -138,7 +139,7 @@ export const createShipment = asyncHandler(async (req, res) => {
     insurancePct: Number(req.body.insurancePct) || 2,
     dutyPct: Number(req.body.dutyPct) || 18,
     vatPct: Number(req.body.vatPct) || 19.25,
-    clearing: Number(req.body.clearingCost) || 350,
+    clearing: resolveClearingFee(goodsUsd, freightUsd, req.body.clearingCost),
     items: Number(req.body.items) || 1
   });
 
@@ -161,7 +162,9 @@ export const createShipment = asyncHandler(async (req, res) => {
     goodsCost: req.body.goodsCost != null ? Number(req.body.goodsCost) : Math.round(goodsUsd * 600),
     shippingCost: req.body.shippingCost != null ? Number(req.body.shippingCost) : Math.round(freightUsd * 600),
     dutiesCost: req.body.dutiesCost != null ? Number(req.body.dutiesCost) : Math.round(landed.dutyAmt * 600),
-    landedCostUsd: Math.round(req.body.landedCostUsd ?? landed.total),
+    landedCostUsd: Math.round(
+      goodsUsd === 0 && freightUsd === 0 ? 0 : (req.body.landedCostUsd ?? landed.total)
+    ),
     status,
     statusBadge: statusBadgeForStatus(status),
     mode: 'active',
@@ -228,16 +231,24 @@ export const updateShipment = asyncHandler(async (req, res) => {
   const goodsUsd = req.body.goodsCostUsd ?? req.body.goodsValue;
   const freightUsd = req.body.freightCostUsd ?? req.body.freight;
   if (goodsUsd != null || freightUsd != null) {
+    const goods = Number(goodsUsd ?? doc.goodsCost / 600 ?? 0);
+    const freight = Number(freightUsd ?? doc.shippingCost / 600 ?? 0);
     const calc = computeLandedCost({
-      goods: Number(goodsUsd ?? doc.goodsCost / 600 ?? 0),
-      freight: Number(freightUsd ?? doc.shippingCost / 600 ?? 0),
+      goods,
+      freight,
       insurancePct: Number(req.body.insurancePct) || doc.insurancePct || 2,
       dutyPct: Number(req.body.dutyPct) || doc.dutyPct || 18,
       vatPct: Number(req.body.vatPct) || doc.vatPct || 19.25,
-      clearing: Number(req.body.clearingCost) || doc.clearingCost || 350,
+      clearing: resolveClearingFee(
+        goods,
+        freight,
+        req.body.clearingCost ?? doc.clearingCost
+      ),
       items: Number(req.body.items) || doc.items || 1
     });
-    doc.landedCostUsd = Math.round(req.body.landedCostUsd ?? calc.total);
+    doc.landedCostUsd = Math.round(
+      goods === 0 && freight === 0 ? 0 : (req.body.landedCostUsd ?? calc.total)
+    );
     doc.goodsCost = Math.round(calc.breakdown[0].value * 600);
     doc.shippingCost = Math.round(calc.breakdown[1].value * 600);
     doc.dutiesCost = Math.round(calc.dutyAmt * 600);

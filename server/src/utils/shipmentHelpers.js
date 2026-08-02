@@ -163,6 +163,15 @@ export function computeLandedCost({ goods = 0, freight = 0, insurancePct = 2, du
   };
 }
 
+/** Default clearing estimate ($350) only when there is cargo value; empty shipments stay $0. */
+export function resolveClearingFee(goodsUsd, freightUsd, explicitClearing) {
+  if (explicitClearing != null && explicitClearing !== '') {
+    const n = Number(explicitClearing);
+    return Number.isFinite(n) ? n : 0;
+  }
+  return (Number(goodsUsd) || 0) + (Number(freightUsd) || 0) > 0 ? 350 : 0;
+}
+
 async function isShipmentIdTaken(Shipment, businessId, shipmentId) {
   if (await Shipment.exists({ business: businessId, shipmentId })) return true;
   // Legacy global unique index (shipmentId_1) — check cross-tenant until reconciled on startup.

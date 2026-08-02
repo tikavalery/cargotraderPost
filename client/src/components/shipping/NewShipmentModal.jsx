@@ -123,7 +123,9 @@ export default function NewShipmentModal({
     const insurance = goods * 0.02;
     const duty = (goods + freight) * 0.18;
     const vat = (goods + freight + insurance + duty) * 0.1925;
-    return Math.round(goods + freight + insurance + duty + vat + 350);
+    // Clearing estimate only when there is cargo value (empty shipments stay $0)
+    const clearing = goods + freight > 0 ? 350 : 0;
+    return Math.round(goods + freight + insurance + duty + vat + clearing);
   }, [form.goodsValue, form.freight]);
 
   const isCompletedStatus = ['Delivered', 'Closed', 'Offloaded'].includes(form.status);
