@@ -2191,6 +2191,54 @@
   .ship-lc-toolbar-actions .ship-lc-btn {
     flex: 1 1 auto;
   }
+
+  /*
+    Phones: collapse the tall 3×2 summary into one compact strip (~1/5 height).
+    Label + figure sit on one line; horizontal scroll if needed.
+  */
+  .ship-lc-summary,
+  .ship-fw-modal .ship-lc-summary-dock {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0;
+    padding: 4px 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .ship-lc-sum-item {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 4px;
+    padding: 2px 8px;
+    border-right: 1px solid rgba(255, 255, 255, 0.14);
+    border-bottom: none;
+    min-height: 0;
+  }
+
+  .ship-lc-sum-item:last-child {
+    border-right: none;
+  }
+
+  .ship-lc-sum-label {
+    font-size: 8px;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .ship-lc-sum-val {
+    font-size: 11px;
+    line-height: 1.15;
+  }
+
+  .ship-lc-sum-grand .ship-lc-sum-val {
+    font-size: 12px;
+  }
 }
 
 .ship-lc-goods-banner {
