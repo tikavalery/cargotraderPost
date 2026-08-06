@@ -26,7 +26,6 @@ export default function ShipmentDetailModal({
   onClose,
   onMarkArrived,
   onItemsChanged,
-  onEdit,
   completed,
   readOnly = false,
   canViewCost = true,
@@ -574,16 +573,6 @@ export default function ShipmentDetailModal({
           <span style={{ fontSize: 12, color: 'var(--text-light)' }}>🚢 {shipmentId}</span>
           <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', flexWrap: 'wrap' }}>
             <button type="button" className="btn-fw-close" onClick={onClose}>Close</button>
-            {onEdit && (
-              <button
-                type="button"
-                className="btn-ghost"
-                style={{ border: '1.5px solid var(--border)' }}
-                onClick={() => onEdit(shipment)}
-              >
-                <i className="fas fa-pen" /> Edit Shipment
-              </button>
-            )}
             {!completed && !alreadyArrived && onMarkArrived && (
               <button
                 type="button"

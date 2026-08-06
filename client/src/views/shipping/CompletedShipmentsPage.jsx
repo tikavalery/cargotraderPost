@@ -248,7 +248,6 @@ export default function CompletedShipmentsPage() {
           shipment={detail}
           onClose={() => setDetail(null)}
           onItemsChanged={refetch}
-          onEdit={canManageShipments ? handleEdit : undefined}
           onShipmentUpdated={(updated) => {
             setDetail(updated);
             refetch();

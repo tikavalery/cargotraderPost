@@ -12,13 +12,21 @@ const nextConfig = {
   // Keep .js/.jsx resolution consistent with the previous Vite app.
   pageExtensions: ['js', 'jsx'],
   async rewrites() {
-    const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000').replace(/\/$/, '');
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${apiOrigin}/api/:path*`
-      }
-    ];
+    // beforeFiles: must run before the App Router catch-all [[...slug]],
+    // otherwise /api/* is served as HTML and auth/config calls fail.
+    const apiOrigin = (
+      process.env.NEXT_PUBLIC_API_URL ||
+      process.env.VITE_API_URL ||
+      'http://localhost:5000'
+    ).replace(/\/$/, '');
+    return {
+      beforeFiles: [
+        {
+          source: '/api/:path*',
+          destination: `${apiOrigin}/api/:path*`
+        }
+      ]
+    };
   }
 };
 
