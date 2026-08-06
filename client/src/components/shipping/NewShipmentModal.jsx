@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import ModalPortal from '../common/ModalPortal';
 import { shippingApi } from '../../services/shippingApi';
 import { useWarehouses } from '../../hooks/useWarehouses';
+import { formatXaf } from '../../utils/format';
+import { XAF_PER_USD } from '../../utils/formatUsd';
 
 const METHODS = [
   { id: 'ocean', label: 'Ocean Freight', icon: 'fa-ship' },
@@ -75,6 +77,13 @@ function shipmentToForm(shipment) {
   };
 }
 
+function sumItemsGoodsCostXaf(list = []) {
+  return list.reduce(
+    (sum, row) => sum + (Number(row.qty) || 0) * (Number(row.purchasePrice) || 0),
+    0
+  );
+}
+
 export default function NewShipmentModal({
   open,
   shipment,
@@ -87,18 +96,57 @@ export default function NewShipmentModal({
   const { warehouses } = useWarehouses();
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [inventoryGoodsCostXaf, setInventoryGoodsCostXaf] = useState(0);
+  const [goodsCostLoading, setGoodsCostLoading] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     if (isEdit) {
       setForm(shipmentToForm(shipment));
+      setInventoryGoodsCostXaf(0);
     } else {
       setForm({ ...EMPTY_FORM });
+      setInventoryGoodsCostXaf(0);
       shippingApi.nextId().then((res) => {
         setForm((f) => ({ ...f, shipmentId: res.data?.shipmentId || '' }));
       }).catch(() => {});
     }
     // Only re-init when opening or switching which shipment is edited — not on parent re-renders.
+  }, [open, isEdit, shipment?.shipmentId, shipment?.id]);
+
+  // When editing, show Cost of Goods from items on the shipment (qty × purchase price)
+  useEffect(() => {
+    if (!open || !isEdit || !shipment) return undefined;
+    const id = shipment.shipmentId || shipment.id;
+    let cancelled = false;
+    setGoodsCostLoading(true);
+    shippingApi
+      .getItems(id, { page: 1, limit: 100 })
+      .then((res) => {
+        if (cancelled) return;
+        const list = res.data?.data || [];
+        const fromTotals = res.data?.totals?.goodsCostXaf;
+        const xaf =
+          fromTotals != null && fromTotals !== ''
+            ? Number(fromTotals) || 0
+            : sumItemsGoodsCostXaf(list);
+        setInventoryGoodsCostXaf(xaf);
+        const goodsUsd = Math.round((xaf / XAF_PER_USD) * 100) / 100;
+        setForm((f) => ({
+          ...f,
+          goodsValue: goodsUsd,
+          items: Number(res.data?.pagination?.total) || list.length || f.items
+        }));
+      })
+      .catch(() => {
+        if (!cancelled) setInventoryGoodsCostXaf(0);
+      })
+      .finally(() => {
+        if (!cancelled) setGoodsCostLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [open, isEdit, shipment?.shipmentId, shipment?.id]);
 
   useEffect(() => {
@@ -343,8 +391,31 @@ export default function NewShipmentModal({
 
               <div className="form-grid-2">
                 <div>
-                  <label className="form-label" htmlFor="ship-form-goods">Goods Value (USD)</label>
-                  <input id="ship-form-goods" type="number" className="form-input" value={form.goodsValue} onChange={set('goodsValue')} />
+                  {isEdit ? (
+                    <>
+                      <label className="form-label" htmlFor="ship-form-goods-cost">Cost of Goods</label>
+                      <input
+                        id="ship-form-goods-cost"
+                        className="form-input"
+                        value={goodsCostLoading ? 'Loading…' : formatXaf(inventoryGoodsCostXaf)}
+                        readOnly
+                      />
+                      <p className="form-hint" style={{ marginTop: 4 }}>
+                        From items on this shipment (qty × purchase price). Used for landed cost.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <label className="form-label" htmlFor="ship-form-goods">Goods Value (USD)</label>
+                      <input
+                        id="ship-form-goods"
+                        type="number"
+                        className="form-input"
+                        value={form.goodsValue}
+                        onChange={set('goodsValue')}
+                      />
+                    </>
+                  )}
                 </div>
                 <div>
                   <label className="form-label" htmlFor="ship-form-freight">Freight (USD)</label>

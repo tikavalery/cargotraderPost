@@ -5,7 +5,7 @@
 .btn-primary-orange:hover { background: #d14e1a; }
 .page-header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-/* Active shipments — page header rhythm */
+/* Active shipments ? page header rhythm */
 .ship-active-page .page-header {
   align-items: flex-start;
   margin-bottom: 20px;
@@ -51,7 +51,7 @@
 
 /*
   Shipments list (Logistics / Completed): tablet+ collapses title, actions, chips,
-  and card filters into ~1/5 the former chrome height. Phones (≤640) unchanged.
+  and card filters into ~1/5 the former chrome height. Phones (?640) unchanged.
 */
 @media (min-width: 641px) {
   .content.ship-list-page {
@@ -750,7 +750,7 @@
   cursor: not-allowed;
 }
 
-/* Detail modal — left edge tracks collapsed/expanded sidebar rail */
+/* Detail modal ? left edge tracks collapsed/expanded sidebar rail */
 .ship-fw-modal {
   position: fixed;
   top: var(--navbar-h);
@@ -781,7 +781,7 @@
     opacity 0.3s ease;
 }
 
-/* Shipment detail chrome — stacked bands by default; compact strip on tablet+ */
+/* Shipment detail chrome ? stacked bands by default; compact strip on tablet+ */
 .ship-fw-modal .ship-detail-chrome {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -833,7 +833,7 @@
 /*
   Tablet / laptop / desktop: denser 2-row chrome (never force a single overlapping strip).
   Row 1 = identity + stats + close. Row 2 = tab + search / filters / actions.
-  Phones (≤640px) keep stacked bands below.
+  Phones (?640px) keep stacked bands below.
 */
 @media (min-width: 641px) {
   .ship-fw-modal .ship-detail-chrome {
@@ -904,7 +904,7 @@
     max-width: min(280px, 28vw);
   }
 
-  /* Keep stats on the navy row when space allows (override warehouses ≤900 hide) */
+  /* Keep stats on the navy row when space allows (override warehouses ?900 hide) */
   .ship-fw-modal .fw-modal-summary-center {
     display: flex !important;
     flex: 1 1 auto;
@@ -1671,8 +1671,8 @@
 
 @media (max-width: 640px) {
   /*
-    Shipping list phones: single-row navbar + slim actions/filters ≈ under 1/5 viewport.
-    Same orange/green — denser chrome only.
+    Shipping list phones: single-row navbar + slim actions/filters ? under 1/5 viewport.
+    Same orange/green ? denser chrome only.
   */
   .app-shell--shipping {
     --navbar-h: 48px;
@@ -1740,7 +1740,7 @@
     transform: none;
   }
 
-  /* Navbar already has + — hide duplicate page "New Shipment" */
+  /* Navbar already has + ? hide duplicate page "New Shipment" */
   .content.ship-list-page .ship-mobile-new-shipment {
     display: none !important;
   }
@@ -1839,4 +1839,324 @@
   .app-shell--shipping .search-bar {
     max-width: 88px;
   }
+}
+
+/* ?? Shipment landed cost worksheet tab ?? */
+.ship-lc-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+.ship-lc-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ship-lc-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.ship-lc-sub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.45;
+  max-width: 520px;
+}
+.ship-lc-toolbar-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ship-lc-btn {
+  white-space: nowrap;
+}
+.ship-lc-rates {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 4px 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  max-width: 480px;
+}
+.ship-lc-rate {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(120px, 180px);
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.ship-lc-rate:last-child {
+  border-bottom: none;
+}
+.ship-lc-rate label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted, #64748b);
+  margin: 0;
+}
+.ship-lc-input {
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  background: #fff;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-dark);
+  box-sizing: border-box;
+}
+.ship-lc-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.ship-lc-input:disabled {
+  background: var(--bg);
+  color: var(--text-mid);
+}
+.ship-lc-table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: auto;
+  background: #fff;
+}
+.ship-lc-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px;
+}
+.ship-lc-table thead th {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+  background: #FAFBFC;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+.ship-lc-table thead th.num,
+.ship-lc-table tbody td.num {
+  text-align: right;
+}
+.ship-lc-table tbody td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  font-size: 12px;
+  color: var(--text-mid);
+}
+.ship-lc-table tbody tr:hover {
+  background: rgba(232, 93, 38, 0.04);
+}
+.ship-lc-item-name {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 13px;
+}
+.ship-lc-item-sku {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+.ship-lc-line-total {
+  font-weight: 700;
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+.ship-lc-extras {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+}
+.ship-lc-extras-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.ship-lc-extras-head h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.ship-lc-extras-empty {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-light);
+}
+.ship-lc-fee-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ship-lc-fee-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px 36px;
+  gap: 8px;
+  align-items: center;
+}
+.ship-lc-fee-label {
+  height: 34px;
+}
+.ship-lc-fee-remove {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ship-lc-fee-remove:hover {
+  background: rgba(231, 76, 60, 0.18);
+}
+.ship-lc-summary {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #1A3C5E 0%, #14294E 100%);
+  border-radius: 10px;
+}
+.ship-fw-modal .ship-lc-summary-dock {
+  flex-shrink: 0;
+  border-radius: 0;
+  margin: 0;
+  padding: 12px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 2;
+}
+.ship-fw-modal .fw-modal-footer {
+  flex-shrink: 0;
+}
+.ship-lc-sum-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 0 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+.ship-lc-sum-item:last-child {
+  border-right: none;
+}
+.ship-lc-sum-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.ship-lc-sum-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ship-lc-sum-grand .ship-lc-sum-val {
+  color: var(--primary, #E85D26);
+  font-size: 14px;
+}
+.ship-lc-empty,
+.ship-lc-loading {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-light);
+  font-size: 13px;
+}
+.ship-lc-empty i,
+.ship-lc-loading i {
+  display: block;
+  font-size: 22px;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+@media (max-width: 900px) {
+  .ship-lc-rates {
+    max-width: none;
+  }
+  .ship-lc-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ship-lc-sum-item {
+    border-right: none;
+    padding: 6px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .ship-lc-fee-row {
+    grid-template-columns: 1fr 110px 34px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ship-lc-rate {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    align-items: stretch;
+  }
+  .ship-lc-toolbar-actions {
+    width: 100%;
+  }
+  .ship-lc-toolbar-actions .ship-lc-btn {
+    flex: 1 1 auto;
+  }
+}
+
+.ship-lc-goods-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  max-width: 480px;
+}
+.ship-lc-goods-banner > div:first-child {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.ship-lc-goods-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted, #64748b);
+}
+.ship-lc-goods-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+.ship-lc-extras {
+  max-width: 480px;
 }

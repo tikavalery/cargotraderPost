@@ -52,7 +52,7 @@ vi.mock('../../api', () => ({
   }
 }));
 
-import ProfileSettingsPage from '../../pages/settings/ProfileSettingsPage';
+import ProfileSettingsPage from '../views/settings/ProfileSettingsPage';
 
 function renderProfile() {
   return render(

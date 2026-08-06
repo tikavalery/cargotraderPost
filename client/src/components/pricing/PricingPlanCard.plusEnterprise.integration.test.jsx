@@ -69,7 +69,7 @@ vi.mock('../../services/subscriptionApi', () => ({
   }
 }));
 
-import PricingPlansPage from '../../pages/pricing/PricingPlansPage';
+import PricingPlansPage from '../views/pricing/PricingPlansPage';
 
 describe('PricingPlansPage Professional Plus + Enterprise cards (integration)', () => {
   beforeEach(() => {

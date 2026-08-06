@@ -111,22 +111,22 @@ app.get('/api/health', (req, res) => {
 app.use('/api', apiRateLimiter);
 app.use('/api', apiRoutes);
 
-// Serve the Vite build whenever it exists (Heroku / production). Do not rely
-// only on NODE_ENV — if Config Vars omit it, GET / would return API 404 JSON.
+// Optional legacy static UI (old Vite dist). Primary UI is Next.js on Vercel;
+// this API process normally serves JSON only.
 const clientDist = path.resolve(__dirname, '../../client/dist');
 const clientIndex = path.join(clientDist, 'index.html');
 const serveClient = fs.existsSync(clientIndex);
 
 if (serveClient) {
-  console.log(`[static] Serving UI from ${clientDist}`);
+  console.log(`[static] Serving legacy UI from ${clientDist}`);
   app.use(express.static(clientDist));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) return next();
     res.sendFile(clientIndex);
   });
 } else {
-  console.warn(
-    `[static] No UI build at ${clientIndex}. Run client build (Heroku: heroku-postbuild). NODE_ENV=${process.env.NODE_ENV || '(unset)'}`
+  console.log(
+    `[static] API-only mode (Next.js UI is separate). NODE_ENV=${process.env.NODE_ENV || '(unset)'}`
   );
 }
 

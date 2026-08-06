@@ -15,6 +15,12 @@ import {
   statusBadgeForStatus
 } from '../utils/shipmentHelpers.js';
 import { getShipmentItems, offloadShipmentItems } from '../utils/inventoryLocationHelpers.js';
+import {
+  applyLandedCostEstimates,
+  buildLandedCostWorksheet,
+  readLandedCostSheet,
+  sheetPayloadFromWorksheet
+} from '../utils/landedCostSheet.js';
 import { invalidateFinanceSync } from '../services/financeSync.service.js';
 import {
   getShipmentTracking,
@@ -93,6 +99,12 @@ export const listShipmentItems = asyncHandler(async (req, res) => {
   const doc = await findShipment(req.businessId, req.params.shipmentId);
   let data = await getShipmentItems(req.businessId, doc);
 
+  // Full-shipment purchase cost (all lines), independent of table filters/pagination
+  const goodsCostXaf = data.reduce(
+    (sum, row) => sum + (Number(row.qty) || 0) * (Number(row.purchasePrice) || 0),
+    0
+  );
+
   const category = String(req.query.category || '').trim();
   const search = String(req.query.search || '').trim().toLowerCase();
   if (category) data = data.filter((r) => r.category === category);
@@ -106,7 +118,7 @@ export const listShipmentItems = asyncHandler(async (req, res) => {
 
   const wantsPage = req.query.page != null || req.query.limit != null || req.query.pageSize != null;
   if (!wantsPage) {
-    return res.json({ ok: true, data });
+    return res.json({ ok: true, data, totals: { goodsCostXaf } });
   }
 
   const page = Math.max(1, parseInt(req.query.page, 10) || 1);
@@ -124,7 +136,8 @@ export const listShipmentItems = asyncHandler(async (req, res) => {
       pageSize: limit,
       total,
       pages
-    }
+    },
+    totals: { goodsCostXaf }
   });
 });
 
@@ -339,6 +352,95 @@ export const patchCosts = asyncHandler(async (req, res) => {
   await doc.save();
   invalidateFinanceSync(req.businessId);
   res.json({ ok: true, data: formatShipmentRow(doc), calc });
+});
+
+/** Landed cost worksheet: per-item editable costs + extra fees (XAF). */
+export const getLandedCostSheet = asyncHandler(async (req, res) => {
+  const doc = await findShipment(req.businessId, req.params.shipmentId);
+  const items = await getShipmentItems(req.businessId, doc);
+  const saved = readLandedCostSheet(doc);
+  const worksheet = buildLandedCostWorksheet(items, saved);
+  res.json({
+    ok: true,
+    data: worksheet,
+    shipment: formatShipmentRow(doc)
+  });
+});
+
+export const saveLandedCostSheet = asyncHandler(async (req, res) => {
+  const doc = await findShipment(req.businessId, req.params.shipmentId);
+  const items = await getShipmentItems(req.businessId, doc);
+  const body = req.body || {};
+
+  let rows = Array.isArray(body.rows) ? body.rows : [];
+  let rates = body.rates || {};
+  const extraFees = body.extraFees || [];
+
+  if (body.applyEstimates) {
+    const base = buildLandedCostWorksheet(items, {
+      rates,
+      lines: Object.fromEntries(
+        rows.map((r) => [
+          String(r.itemKey || r._id),
+          {
+            purchaseCostXaf: r.purchaseCostXaf,
+            freightXaf: r.freightXaf,
+            insuranceXaf: r.insuranceXaf,
+            dutyXaf: r.dutyXaf,
+            vatXaf: r.vatXaf,
+            otherXaf: r.otherXaf
+          }
+        ])
+      ),
+      extraFees
+    });
+    const estimated = applyLandedCostEstimates(base.rows, { ...base.rates, ...rates });
+    rows = estimated.rows;
+    rates = estimated.rates;
+  }
+
+  const worksheet = buildLandedCostWorksheet(items, {
+    rates,
+    lines: Object.fromEntries(
+      rows.map((r) => [
+        String(r.itemKey || r._id),
+        {
+          purchaseCostXaf: r.purchaseCostXaf,
+          freightXaf: r.freightXaf,
+          insuranceXaf: r.insuranceXaf,
+          dutyXaf: r.dutyXaf,
+          vatXaf: r.vatXaf,
+          otherXaf: r.otherXaf
+        }
+      ])
+    ),
+    extraFees
+  });
+
+  const sheet = sheetPayloadFromWorksheet(worksheet);
+  const tracking = { ...(doc.tracking || {}), landedCostSheet: sheet };
+  doc.tracking = tracking;
+  if (typeof doc.markModified === 'function') doc.markModified('tracking');
+
+  const t = worksheet.totals;
+  doc.goodsCost = t.goodsCostXaf;
+  doc.shippingCost = t.freightCostXaf;
+  doc.dutiesCost = t.taxCostXaf;
+  doc.clearingCost = t.clearingXaf + t.extraFeesXaf;
+  doc.landedCostUsd = Math.round((t.grandTotalXaf || 0) / 600);
+  doc.insurancePct = Number(worksheet.rates.insurancePct) || doc.insurancePct;
+  doc.dutyPct = Number(worksheet.rates.dutyPct) || doc.dutyPct;
+  doc.vatPct = Number(worksheet.rates.vatPct) || doc.vatPct;
+
+  await doc.save();
+  invalidateFinanceSync(req.businessId);
+
+  res.json({
+    ok: true,
+    data: worksheet,
+    shipment: formatShipmentRow(doc),
+    message: 'Landed cost worksheet saved'
+  });
 });
 
 export const getStats = asyncHandler(async (req, res) => {

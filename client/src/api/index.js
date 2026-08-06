@@ -2,10 +2,26 @@ import axios from 'axios';
 
 /**
  * API origin for split deploys (Vercel UI → Railway API).
- * Leave unset in local Vite so requests go through the `/api` proxy.
+ * Leave unset locally so requests go through Next.js `/api` rewrites → Express.
  * Example production: https://your-api.up.railway.app
+ *
+ * Prefer NEXT_PUBLIC_API_URL; VITE_API_URL kept as a temporary fallback.
  */
-const API_ORIGIN = String(import.meta.env.VITE_API_URL || '')
+function readPublicEnv(name) {
+  if (typeof process !== 'undefined' && process.env && process.env[name] != null) {
+    return process.env[name];
+  }
+  try {
+    // Legacy Vite builds (if any cached bundle still references import.meta)
+    return import.meta.env?.[name];
+  } catch {
+    return undefined;
+  }
+}
+
+const API_ORIGIN = String(
+  readPublicEnv('NEXT_PUBLIC_API_URL') || readPublicEnv('VITE_API_URL') || ''
+)
   .trim()
   .replace(/\/$/, '');
 

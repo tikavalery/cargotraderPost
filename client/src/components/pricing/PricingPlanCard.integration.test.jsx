@@ -70,7 +70,7 @@ vi.mock('../../services/subscriptionApi', () => ({
   }
 }));
 
-import PricingPlansPage from '../../pages/pricing/PricingPlansPage';
+import PricingPlansPage from '../views/pricing/PricingPlansPage';
 import { STATIC_PLANS } from '../../constants/plans';
 
 describe('PricingPlansPage Free plan card (integration)', () => {

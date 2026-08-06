@@ -13,6 +13,7 @@ node_modules/
 
 # Build output
 client/dist/
+client/.next/
 dist/
 build/
 

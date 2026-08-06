@@ -1,7 +1,8 @@
 import LegalPageLayout from './LegalPageLayout';
 
 const SUPPORT_EMAIL =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPPORT_EMAIL) ||
+  (typeof process !== 'undefined' &&
+    (process.env.NEXT_PUBLIC_SUPPORT_EMAIL || process.env.VITE_SUPPORT_EMAIL)) ||
   'support@cargotrader.app';
 
 export default function ContactSupportPage() {

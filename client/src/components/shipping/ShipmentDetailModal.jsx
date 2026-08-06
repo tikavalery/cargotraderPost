@@ -18,6 +18,7 @@ import StockBulkSelectionBar from '../common/StockBulkSelectionBar';
 import TransferModal from '../warehouses/TransferModal';
 import { emitInventoryChanged } from '../../utils/inventoryEvents';
 import { exportShipmentItemsCsv, printPackingList } from '../../utils/shipmentExport';
+import ShipmentLandedCostTab from './ShipmentLandedCostTab';
 
 export default function ShipmentDetailModal({
   open,
@@ -33,6 +34,7 @@ export default function ShipmentDetailModal({
 }) {
   const [items, setItems] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, pageSize: 25, total: 0, pages: 1 });
+  const [goodsCostXaf, setGoodsCostXaf] = useState(0);
   const [itemsLoading, setItemsLoading] = useState(false);
   const [category, setCategory] = useState('');
   const [stockSearch, setStockSearch] = useState('');
@@ -45,11 +47,20 @@ export default function ShipmentDetailModal({
   const [transferSaving, setTransferSaving] = useState(false);
   const [transferTick, setTransferTick] = useState(0);
   const [markingArrived, setMarkingArrived] = useState(false);
+  const [activeTab, setActiveTab] = useState('items');
+  const [worksheetTotals, setWorksheetTotals] = useState(null);
+  const [liveShipment, setLiveShipment] = useState(shipment);
   const { warehouses } = useWarehouses();
   const { stores: allStores } = useStores({ lite: true });
   const { shipments: activeShipments } = useShipments({ mode: 'active', limit: 100 });
 
   const shipmentId = shipment?.shipmentId || shipment?.id;
+
+  useEffect(() => {
+    setLiveShipment(shipment);
+    setWorksheetTotals(null);
+    setActiveTab('items');
+  }, [shipmentId, open]);
 
   useEffect(() => {
     const id = setTimeout(() => setSearchDebounced(stockSearch.trim()), 300);
@@ -72,7 +83,19 @@ export default function ShipmentDetailModal({
     };
     shippingApi.getItems(id, params)
       .then((res) => {
-        setItems(res.data?.data || []);
+        const list = res.data?.data || [];
+        setItems(list);
+        if (res.data?.totals && Object.prototype.hasOwnProperty.call(res.data.totals, 'goodsCostXaf')) {
+          setGoodsCostXaf(Number(res.data.totals.goodsCostXaf) || 0);
+        } else {
+          // Fallback when API has not returned totals yet
+          setGoodsCostXaf(
+            list.reduce(
+              (sum, row) => sum + (Number(row.qty) || 0) * (Number(row.purchasePrice) || 0),
+              0
+            )
+          );
+        }
         const p = res.data?.pagination;
         if (p) {
           setPagination({
@@ -82,12 +105,12 @@ export default function ShipmentDetailModal({
             pages: Number(p.pages) || 1
           });
         } else {
-          const list = res.data?.data || [];
           setPagination({ page: 1, pageSize: list.length || pageSize, total: list.length, pages: 1 });
         }
       })
       .catch(() => {
         setItems([]);
+        setGoodsCostXaf(0);
         setPagination({ page: 1, pageSize, total: 0, pages: 1 });
       })
       .finally(() => setItemsLoading(false));
@@ -111,6 +134,17 @@ export default function ShipmentDetailModal({
     () => items.map((r) => ({ ...r, selectId: r._id || r.id })),
     [items]
   );
+
+  const itemsGoodsCost = useMemo(
+    () =>
+      stockRows.reduce(
+        (sum, row) => sum + (Number(row.qty) || 0) * (Number(row.purchasePrice) || 0),
+        0
+      ),
+    [stockRows]
+  );
+  // Prefer API full-shipment total; if it is still 0 while visible rows have cost, use row sum
+  const displayGoodsCost = goodsCostXaf > 0 ? goodsCostXaf : itemsGoodsCost;
 
   const selection = usePurchaseSelection(stockRows);
   const totalItems = pagination.total || shipment?.items || items.length;
@@ -188,15 +222,20 @@ export default function ShipmentDetailModal({
 
   if (!open || !shipment) return null;
 
-  const liveStatus = shipment.status;
+  const displayShipment = liveShipment || shipment;
+  const liveStatus = displayShipment.status;
   const transferSource = {
     type: 'shipment',
     id: shipmentId,
     shipmentId,
     name: shipmentId,
-    originFlag: shipment.originFlag
+    originFlag: displayShipment.originFlag
   };
   const alreadyArrived = ['Arrived', 'Delivered', 'Closed', 'Offloaded'].includes(liveStatus);
+  const landedCostDisplay =
+    worksheetTotals?.grandTotalXaf != null
+      ? formatXaf(worksheetTotals.grandTotalXaf)
+      : formatUsdAmount(displayShipment.landedCostUsd);
 
   return (
     <>
@@ -209,7 +248,7 @@ export default function ShipmentDetailModal({
               <div className="ship-detail-identity">
                 <div className="fw-modal-wh-name">{shipmentId}</div>
                 <div className="fw-modal-wh-loc">
-                  {shipment.originFlag} {shipment.origin} → {shipment.destFlag} {shipment.dest}
+                  {displayShipment.originFlag} {displayShipment.origin} → {displayShipment.destFlag} {displayShipment.dest}
                 </div>
                 <span className={`badge ${shipmentStatusBadgeClass(liveStatus)}`}>
                   {liveStatus}
@@ -217,8 +256,14 @@ export default function ShipmentDetailModal({
               </div>
             </div>
             <div className="fw-modal-summary-center">
+              {canViewCost && (
+                <div className="fw-modal-stat">
+                  <div className="fw-modal-stat-val">{formatXaf(displayGoodsCost)}</div>
+                  <div className="fw-modal-stat-label">Cost of Goods</div>
+                </div>
+              )}
               <div className="fw-modal-stat">
-                <div className="fw-modal-stat-val">{formatUsdAmount(shipment.landedCostUsd)}</div>
+                <div className="fw-modal-stat-val">{landedCostDisplay}</div>
                 <div className="fw-modal-stat-label">Landed Cost</div>
               </div>
               <div className="fw-modal-stat">
@@ -226,17 +271,17 @@ export default function ShipmentDetailModal({
                 <div className="fw-modal-stat-label">Total Items</div>
               </div>
               <div className="fw-modal-stat">
-                <div className="fw-modal-stat-val">{shipment.weight || '—'}</div>
+                <div className="fw-modal-stat-val">{displayShipment.weight || '—'}</div>
                 <div className="fw-modal-stat-label">Cargo Weight</div>
               </div>
               <div className="fw-modal-stat">
-                <div className="fw-modal-stat-val" style={{ fontSize: 13 }}>{shipment.carrier}</div>
-                <div className="fw-modal-stat-label">ETA {shipment.eta}</div>
+                <div className="fw-modal-stat-val" style={{ fontSize: 13 }}>{displayShipment.carrier}</div>
+                <div className="fw-modal-stat-label">ETA {displayShipment.eta}</div>
               </div>
               <div className="fw-modal-stat">
                 <div className="fw-modal-stat-val" style={{ fontSize: 13 }}>
-                  {shipment.currentLocation ||
-                    [shipment.currentCity, shipment.currentCountry].filter(Boolean).join(', ') ||
+                  {displayShipment.currentLocation ||
+                    [displayShipment.currentCity, displayShipment.currentCountry].filter(Boolean).join(', ') ||
                     '—'}
                 </div>
                 <div className="fw-modal-stat-label">Current location</div>
@@ -246,11 +291,27 @@ export default function ShipmentDetailModal({
 
           <div className="fw-modal-tabs">
             <div className="fw-tab-row">
-              <span className="fw-tab-btn active" aria-current="page">
+              <button
+                type="button"
+                className={`fw-tab-btn${activeTab === 'items' ? ' active' : ''}`}
+                aria-current={activeTab === 'items' ? 'page' : undefined}
+                onClick={() => setActiveTab('items')}
+              >
                 <i className="fas fa-cube" /> Individual Items
                 <span className="tab-count">{totalItems}</span>
-              </span>
+              </button>
+              {canViewCost && (
+                <button
+                  type="button"
+                  className={`fw-tab-btn${activeTab === 'landed' ? ' active' : ''}`}
+                  aria-current={activeTab === 'landed' ? 'page' : undefined}
+                  onClick={() => setActiveTab('landed')}
+                >
+                  <i className="fas fa-calculator" /> Landed Cost
+                </button>
+              )}
             </div>
+            {activeTab === 'items' && (
             <div className="fw-modal-tabs-right">
               <div className="fw-search-wrap">
                 <i className="fas fa-search" />
@@ -301,6 +362,7 @@ export default function ShipmentDetailModal({
                 </button>
               )}
             </div>
+            )}
           </div>
 
           <button type="button" className="fw-close-btn ship-detail-close" onClick={onClose} aria-label="Close">
@@ -309,7 +371,22 @@ export default function ShipmentDetailModal({
         </div>
 
         <div className="fw-modal-body">
-            {itemsLoading ? (
+          {activeTab === 'landed' ? (
+            <ShipmentLandedCostTab
+              shipmentId={shipmentId}
+              open={open && activeTab === 'landed'}
+              readOnly={readOnly}
+              canViewCost={canViewCost}
+              showToast={showToast}
+              onShipmentUpdated={(updated) => {
+                if (updated) setLiveShipment((prev) => ({ ...prev, ...updated }));
+                onItemsChanged?.();
+              }}
+              onTotalsChange={(t) => {
+                if (t) setWorksheetTotals(t);
+              }}
+            />
+          ) : itemsLoading ? (
               <p style={{ color: 'var(--text-light)', textAlign: 'center', padding: 40 }}>
                 <i className="fas fa-spinner fa-spin" /> Loading items…
               </p>
@@ -463,6 +540,35 @@ export default function ShipmentDetailModal({
               </>
             )}
         </div>
+
+        {activeTab === 'landed' && canViewCost && worksheetTotals && (
+          <div className="ship-lc-summary ship-lc-summary-dock" aria-label="Landed cost summary">
+            <div className="ship-lc-sum-item">
+              <span className="ship-lc-sum-label">Goods</span>
+              <span className="ship-lc-sum-val">{formatXaf(worksheetTotals.goodsCostXaf)}</span>
+            </div>
+            <div className="ship-lc-sum-item">
+              <span className="ship-lc-sum-label">Freight</span>
+              <span className="ship-lc-sum-val">{formatXaf(worksheetTotals.freightCostXaf)}</span>
+            </div>
+            <div className="ship-lc-sum-item">
+              <span className="ship-lc-sum-label">Ins. / duty / VAT</span>
+              <span className="ship-lc-sum-val">{formatXaf(worksheetTotals.taxCostXaf)}</span>
+            </div>
+            <div className="ship-lc-sum-item">
+              <span className="ship-lc-sum-label">Clearing</span>
+              <span className="ship-lc-sum-val">{formatXaf(worksheetTotals.clearingXaf)}</span>
+            </div>
+            <div className="ship-lc-sum-item">
+              <span className="ship-lc-sum-label">Other fees</span>
+              <span className="ship-lc-sum-val">{formatXaf(worksheetTotals.extraFeesXaf)}</span>
+            </div>
+            <div className="ship-lc-sum-item ship-lc-sum-grand">
+              <span className="ship-lc-sum-label">Landed total</span>
+              <span className="ship-lc-sum-val">{formatXaf(worksheetTotals.grandTotalXaf)}</span>
+            </div>
+          </div>
+        )}
 
         <div className="fw-modal-footer">
           <span style={{ fontSize: 12, color: 'var(--text-light)' }}>🚢 {shipmentId}</span>

@@ -15,6 +15,8 @@ router.get('/shipments/next-id', viewAuth, ctrl.nextId);
 router.get('/shipments', viewAuth, ctrl.listShipments);
 router.get('/shipments/:shipmentId', viewAuth, ctrl.getShipment);
 router.get('/shipments/:shipmentId/items', viewAuth, ctrl.listShipmentItems);
+router.get('/shipments/:shipmentId/landed-cost', viewAuth, ctrl.getLandedCostSheet);
+router.put('/shipments/:shipmentId/landed-cost', manageAuth, requirePlanFeature('shipping'), ctrl.saveLandedCostSheet);
 router.get('/shipments/:shipmentId/tracking', viewAuth, ctrl.getTracking);
 router.post('/shipments/:shipmentId/tracking/refresh', manageAuth, requirePlanFeature('shipping'), ctrl.refreshTracking);
 router.get('/documents', viewAuth, ctrl.listDocuments);
