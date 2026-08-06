@@ -830,6 +830,11 @@
   gap: 6px;
 }
 
+.ship-fw-modal .ship-detail-mark-arrived {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 /*
   Tablet / laptop / desktop: denser 2-row chrome (never force a single overlapping strip).
   Row 1 = identity + stats + close. Row 2 = tab + search / filters / actions.

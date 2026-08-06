@@ -362,6 +362,19 @@ export default function ShipmentDetailModal({
               )}
             </div>
             )}
+            {!completed && !alreadyArrived && onMarkArrived && (
+              <button
+                type="button"
+                className="btn-save-changes ship-detail-action ship-detail-mark-arrived"
+                disabled={markingArrived}
+                onClick={handleMarkArrivedClick}
+              >
+                <i className={`fas ${markingArrived ? 'fa-spinner fa-spin' : 'fa-check'}`} />
+                <span className="ship-detail-chrome-label">
+                  {markingArrived ? 'Updating…' : 'Mark Arrived'}
+                </span>
+              </button>
+            )}
           </div>
 
           <button type="button" className="fw-close-btn ship-detail-close" onClick={onClose} aria-label="Close">
@@ -568,24 +581,6 @@ export default function ShipmentDetailModal({
             </div>
           </div>
         )}
-
-        <div className="fw-modal-footer">
-          <span style={{ fontSize: 12, color: 'var(--text-light)' }}>🚢 {shipmentId}</span>
-          <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', flexWrap: 'wrap' }}>
-            <button type="button" className="btn-fw-close" onClick={onClose}>Close</button>
-            {!completed && !alreadyArrived && onMarkArrived && (
-              <button
-                type="button"
-                className="btn-save-changes"
-                disabled={markingArrived}
-                onClick={handleMarkArrivedClick}
-              >
-                <i className={`fas ${markingArrived ? 'fa-spinner fa-spin' : 'fa-check'}`} />
-                {markingArrived ? 'Updating…' : 'Mark Arrived'}
-              </button>
-            )}
-          </div>
-        </div>
       </div>
 
       <TransferModal
